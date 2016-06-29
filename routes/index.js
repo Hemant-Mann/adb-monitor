@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var utils = require('../scripts/util');
+var track = require('../controllers/tracking');
 
 /**
  * Home Controller
@@ -40,5 +41,7 @@ router.get(regex, function (req, res, next) {
     var method = req.url.match(regex)[1];
     Home[method](req, res, next);
 });
+
+router.get('/img/_adm.gif', track);
 
 module.exports = router;
