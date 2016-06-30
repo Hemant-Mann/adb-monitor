@@ -43,9 +43,14 @@ var Controller = (function () {
             self.method = method;
             self.defaultExtension = req.params[1] || "html";
 
-            self[method](req, res, next);
-
-            self._render(res, next);
+            self[method](req, res, function (err, success) {
+                if (err) {
+                    self.view.message = err.message;
+                } else {
+                    self.view.success = success;   
+                }
+                self._render(res, next);
+            });
         },
         _noview: function () {
             this.willRenderLayoutView = false;

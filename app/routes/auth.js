@@ -13,7 +13,6 @@ router.get(regex, function (req, res, next) {
 
 // Allow post on these methods only
 regex = Utils.makeRegex(['login', 'register'], ['html', 'json']);
-console.log(regex);
 router.post(regex, function (req, res, next) {
 	Auth._init(req, res, next);
 });

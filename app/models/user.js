@@ -1,26 +1,29 @@
 var mongoose = require('mongoose');
 var crypto = require('crypto');
 var Schema = mongoose.Schema;
+var Utils = require('../scripts/util');
 
 // create a schema
 var UserSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: [true, Utils.validationMsg('Name', 'required')]
     },
     email: {
         type: String,
-        required: true,
+        required: [true, Utils.validationMsg('Email', 'required')],
         index: true,
-        match: [/.+\@.+\..+/, "Please fill a valid e-mail address"]
+        match: [/.+\@.+\..+/, Utils.validationMsg('Email', 'regex')]
     },
     password: {
         type: String,
-        validate: [
-            function (password) {
-                return password && password.length >= 8
-            }, 'password should be longer'
-        ]
+        validate: {
+            validator: function (p) {
+                return p && p.length >= 8
+            },
+            message: Utils.validationMsg('Password', 'min', {len: 8})
+        },
+        required: [true, Utils.validationMsg('Password', 'required')]
     },
     salt: String,
     created: {
@@ -45,11 +48,19 @@ UserSchema.methods.hashPassword = function (password) {
 
 // pre + post middleware of Mongoose schema
 UserSchema.pre('save', function (next) {
-    if (this.password) {
-        this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
-        this.password = this.hashPassword(this.password);
-    }
-    next();
+    var self = this;
+    mongoose.model('User').findOne({email: self.email.toLowerCase()}, function(err, user) {
+        if (err) return next(new Error("Internal Server Error"));
+        if (user) return next(new Error("Email already exists"));
+
+        if (self.password) {
+            self.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
+            self.password = self.hashPassword(self.password);
+        } else {
+            next(new Error("Password is required"));
+        }
+        next();
+    });
 });
 
 var User = mongoose.model('User', UserSchema);

@@ -1,5 +1,6 @@
 var Shared = require('./controller');
 var User = require('../models/user');
+var Utils = require('../scripts/util');
 
 /**
  * Auth Controller
@@ -13,17 +14,26 @@ var Auth = (function () {
     controller.prototype = new Shared;
     
     var a = new controller();
-    a.register = function (req, res, next) {
-        
+    a.register = function (req, res, cb) {
+        this.view.message = null;
         if (req.method === 'POST') {
+            if (req.body.password !== req.body.repeatPass) {
+                return cb(new Error("Password's Don't Match"));
+            }
             var user = new User(req.body);
+
             user.save(function (err, user) {
                 if (err) {
-                    console.log(err);
-                    return false;
+                    return cb(err, user);
+                }
+
+                if (user) {
+                    return cb({message: 'User registered successfully!'}, user);
                 }
             });
+            return;
         }
+        cb(null);
     };
     
     a.login = function (req, res, next) {

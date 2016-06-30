@@ -21,7 +21,7 @@ var statSchema = new Schema({
     	index: true,
     	required: true
     }
-}, { collection: 'stats' });
+}, { collection: 'statistics' });
 
 
 var Stat = mongoose.model('Stat', statSchema);

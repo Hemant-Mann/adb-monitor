@@ -43,6 +43,51 @@ var utils = {
         regexString += '$';
 
         return new RegExp(regexString);
+    },
+    getErrorMessage: function (err) {
+        var message = '',
+            errName;
+
+        if (err.code) {
+            switch (err.code) {
+                case 11000:
+                case 11001:
+                    message = 'Username already exists';
+                    break;
+
+                default:
+                    message = 'Something went wrong';
+            }
+        } else {
+            for (errName in err.errors) {
+                if (err.errors[errName].message) {
+                    message = err.errors[errName].message;
+                }
+            }
+        }
+        return message;
+    },
+    validationMsg: function (field, type, opts) {
+        var msg = "";
+        switch (type) {
+            case 'required':
+                msg += field + ' is required';
+                break;
+
+            case 'min':
+                msg += field + ' should be greater than ' + opts.len + ' characters';
+                break;
+
+            case 'max':
+                msg += field + ' must be less than ' + opts.len + ' characters';
+                break;
+
+            case 'regex':
+                msg += 'Please fill a valid ' + field;
+                break;
+        }
+
+        return msg;
     }
 };
 
