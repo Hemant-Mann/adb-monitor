@@ -9,7 +9,7 @@ var Controller = (function () {
         description: 'This is a MVC framework built on top of Express',
         keywords: 'mvc, framework, mvc framework, express, node js framework, node js, javascript',
         photo: null, // path to logo,
-        author: null
+        author: 'Hemant Mann'
     };
 
     function Controller() {
@@ -20,7 +20,7 @@ var Controller = (function () {
         this.defaultLayout= 'layouts/standard';
         this.defaultExtension = "html";
         this.method = ''; // will store the method which has been called
-        this.view = {};
+        this.view = {}; // Properties set on this object can be accessed in views
     }
 
     /**
@@ -33,7 +33,6 @@ var Controller = (function () {
             var self = this,
                 method = req.params[0] || null;
 
-            console.log(req.params);
             if (!method) {
                 if (req.url === '/') {
                     method = 'index';
@@ -61,7 +60,6 @@ var Controller = (function () {
                 action = self.__class +'/' + self.method;
 
             self.view.__action = action;
-            console.log(self.view);
             if (self.defaultExtension == "html") {
                 self.view.seo = self.seo;
                 if (this.willRenderLayoutView) {
@@ -73,6 +71,9 @@ var Controller = (function () {
                     return false;
                 }
             } else if (self.defaultExtension == "json") {
+                if (!self.willRenderActionView || !self.willRenderLayoutView) {
+                    return false;
+                }
                 delete self.view.__action;
                 res.json(self.view);
             }
@@ -82,4 +83,4 @@ var Controller = (function () {
     return Controller;
 }());
 
-module.exports = new Controller;
+module.exports = Controller;

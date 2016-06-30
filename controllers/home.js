@@ -7,7 +7,7 @@ var Home = (function () {
     'use strict';
 
     var controller = function Home() {}
-    controller.prototype = Shared;
+    controller.prototype = new Shared;
 
     var h = new controller();
     h.index = function (req, res, next) {

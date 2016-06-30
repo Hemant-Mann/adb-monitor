@@ -9,7 +9,7 @@ var Auth = (function () {
     var controller = function Auth() {}
 
     // inherit Methods|Properties
-    controller.prototype = Shared;
+    controller.prototype = new Shared;
     
     var a = new controller();
     a.register = function (req, res, next) {

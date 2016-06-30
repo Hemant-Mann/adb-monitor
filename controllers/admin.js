@@ -7,7 +7,7 @@ var Admin = (function () {
     'use strict';
 
     var controller = function Admin() {}
-    controller.prototype = Shared;
+    controller.prototype = new Shared;
 
     var a = new controller;
 	a.index = function (req, res, next) {
