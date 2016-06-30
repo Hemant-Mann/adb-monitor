@@ -6,19 +6,20 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var passport = require('passport');
+var session = require('express-session');
 
-var routes = require('./routes/index'),
+var routes = require('./app/routes/index'),
   mongoose = require('mongoose'),
   config = require('./config');
 
 // Routes
-var authRoutes = require('./routes/auth'),
-  adminRoutes = require('./routes/admin');
+var authRoutes = require('./app/routes/auth'),
+  adminRoutes = require('./app/routes/admin');
 
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, '/app/views'));
 app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
@@ -28,6 +29,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use(session({
+  secret: config.session_secret,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());

@@ -57,16 +57,17 @@ var Controller = (function () {
         _render: function (res, next) {
             var self = this,
                 template = self.defaultLayout,
-                action = self.__class +'/' + self.method;
+                action = self.__class +'/' + self.method,
+                view = self.view;
 
-            self.view.__action = action;
+            view.__action = action;
             if (self.defaultExtension == "html") {
-                self.view.seo = self.seo;
+                view.seo = self.seo;
                 if (this.willRenderLayoutView) {
-                    self.view.__action = '../' + self.view.__action;
-                    res.render(template, self.view);
+                    view.__action = '../' + view.__action;
+                    res.render(template, view);
                 } else if (this.willRenderActionView) {
-                    res.render(action, self.view.__action);
+                    res.render(action, view);
                 } else {
                     return false;
                 }
@@ -74,7 +75,6 @@ var Controller = (function () {
                 if (!self.willRenderActionView || !self.willRenderLayoutView) {
                     return false;
                 }
-                delete self.view.__action;
                 res.json(self.view);
             }
         }

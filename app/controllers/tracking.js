@@ -1,5 +1,5 @@
 // models
-var mongoose = require('../mongoose')();
+var mongoose = require('../../mongoose')();
 var Stat = mongoose.model('Stat'),
     Code = mongoose.model('Stat'),
     Visitor = mongoose.model('Visitor'),

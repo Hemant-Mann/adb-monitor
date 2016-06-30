@@ -24,6 +24,25 @@ var utils = {
         regexString += ')\.?(html|json)?$';
 
         return new RegExp(regexString);
+    },
+    /**
+     * Given an array of strings it will form a regular expression
+     * It will match "/login" || "/register"
+     * @param  {Array} urls       Array of strings (containing URL matches) ["login", "register"]
+     * @param  {Array} extensions Array of extensions ["html", "json"]
+     * @return {RegExp}            returns a new Regular Expression
+     */
+    makeRegex: function (urls, extensions) {
+        var regexString = '^/(';
+        regexString += urls.join('|');
+        regexString += ')';
+
+        if (extensions && extensions.length > 0) {
+            regexString += '\.?(' + extensions.join('|') + ')?';
+        }
+        regexString += '$';
+
+        return new RegExp(regexString);
     }
 };
 
