@@ -55,8 +55,12 @@ var Auth = (function () {
                 req.login(user, function(err) {
                     if (err) return cb(err);
 
-                    console.log(req.session);
-                    return res.redirect('/');
+                    var url = '/';
+                    if (req.session.previousPath) {
+                        url = req.session.previousPath
+                        delete req.session.previousPath;
+                    }
+                    return res.redirect(url);
                 });
             })(req, res);
         } else {
@@ -65,9 +69,8 @@ var Auth = (function () {
     };
     
     a.logout = function (req, res, cb) {
-        this.noview();
-        res.send('Logout function');
-        cb();
+        req.logout();
+        res.redirect('/');
     };
 
     a.__class = controller.name.toLowerCase();

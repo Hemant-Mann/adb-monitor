@@ -12,7 +12,7 @@ var Home = (function () {
     var h = new controller();
     h.index = function (req, res, cb) {
         this.view.data = "This is the data set by controller in view";
-        cb(null);
+        cb(null);   // pass control to the calling function
     };
     
     h.support = function (req, res, cb) {

@@ -1,3 +1,4 @@
+var Utils = require('../scripts/util');
 /**
  * Shared Controller
  */
@@ -21,6 +22,7 @@ var Controller = (function () {
         this.defaultExtension = "html";
         this.method = ''; // will store the method which has been called
         this.view = {}; // Properties set on this object can be accessed in views
+        this.secure = [];   // Array to hold which functions needs authorization before executing
     }
 
     /**
@@ -31,7 +33,7 @@ var Controller = (function () {
     Controller.prototype = {
         _init: function (req, res, next) {
             var self = this,
-                method = req.params[0] || null;
+                method = (self.method) || (req.params[0] || null);
 
             if (!method) {
                 if (req.url === '/') {
@@ -40,8 +42,15 @@ var Controller = (function () {
                     return next(new Error("Invalid URL"));
                 }
             }
-            self.method = method;
-            self.defaultExtension = req.params[1] || "html";
+            self.method = method.toLowerCase();
+            self.defaultExtension = Utils.getExtension(req.originalUrl);
+
+            if (self.secure.length > 0 && self.secure.indexOf(self.method) !== -1) {
+                self._secure(req, res);
+            }
+            if (req.user) { // set user to all the views
+                self.view.user = req.user;
+            }
 
             self[method](req, res, function (err, success) {
                 if (err) {
@@ -86,6 +95,19 @@ var Controller = (function () {
                     return false;
                 }
                 res.json(self.view);
+            }
+        },
+        /**
+         * Basic Implementation for authorization, Can be override to suit particular
+         * controller requirements for authorization
+         * @param  {Object} req Express Request Object
+         * @param  {Object} res Express Response Objet
+         * @return {Null}     Redirects the user if not loggedIn
+         */
+        _secure: function (req, res) {
+            if (!req.user) {
+                req.session.previousPath = req.originalUrl
+                res.redirect('/auth/login');
             }
         }
     };

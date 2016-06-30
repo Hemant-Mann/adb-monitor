@@ -88,6 +88,32 @@ var utils = {
         }
 
         return msg;
+    },
+    commonMsg: function (code, prefix) {
+        var obj = {};
+        switch (code) {
+            case 500:
+                obj.message = "Internal Server Error!";
+                break;
+
+            case 400:
+                obj.message = "Error Processing request";
+                break;
+
+            case 200:
+                obj.message = prefix + ' successfully!!';
+                break;
+        }
+
+        return obj;
+    },
+    getExtension: function (url) {
+        var parts = url.split(".");
+        return parts.pop();
+    },
+    parseParam: function (param) {
+        var parts = param.split(".");
+        return parts[0];
     }
 };
 
