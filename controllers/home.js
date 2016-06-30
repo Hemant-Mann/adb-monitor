@@ -1,29 +1,36 @@
+var Shared = require('./controller');
+
 /**
  * Home Controller
  */
 var Home = (function () {
     'use strict';
 
-    function Home() {
+    var controller = function Home() {}
+    controller.prototype = Shared;
 
-    }
-
-    Home.prototype = {
-        index: function (req, res, next) {
-            res.send('Index function');
-        },
-        support: function (req, res, next) {
-            res.send('support function');
-        },
-        contact: function (req, res, next) {
-            res.send('contact function');
-        },
-        privacy: function (req, res, next) {
-            res.send('privacy function');
-        }
+    var h = new controller();
+    h.index = function (req, res, next) {
+        this.view.data = "This is the data set by controller in view";
+    };
+    
+    h.support = function (req, res, next) {
+        this._noview();
+        res.send('support function');
+    };
+    
+    h.contact = function (req, res, next) {
+        this._noview();
+        res.send('contact function');
+    };
+    
+    h.privacy = function (req, res, next) {
+        this._noview();
+        res.send('privacy function');
     };
 
-    return new Home();
+    h.__class = controller.name.toLowerCase();
+    return h;
 }());
 
 module.exports = Home;

@@ -8,9 +8,7 @@ var Auth = require('../controllers/auth');
 var regex = utils.urlRegex(Auth);
 
 router.get(regex, function (req, res, next) {
-
-    var method = req.url.match(regex)[1];
-    Auth[method](req, res, next);
+	Auth._init(req, res, next)
 });
 
 module.exports = router;

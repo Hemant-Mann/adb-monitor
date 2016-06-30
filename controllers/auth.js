@@ -1,23 +1,36 @@
+var Shared = require('./controller');
+
 /**
  * Auth Controller
  */
 var Auth = (function () {
     'use strict';
 
-    function Auth() {
+    var controller = function Auth() {}
 
-    }
-
-    Auth.prototype = {
-        login: function (req, res, next) {
-            res.send('Login function');
-        },
-        logout: function (req, res, next) {
-            res.send('Logout function');
-        }
+    // inherit Methods|Properties
+    controller.prototype = Shared;
+    
+    var a = new controller();
+    a.register = function (req, res, next) {
+        this._jsonView();
+        this.view.fields = ["email", "password"];
+    };
+    
+    a.login = function (req, res, next) {
+        this.view.validations = {
+            name: "required",
+            email: "greater than 3 chars"
+        };
+    };
+    
+    a.logout = function (req, res, next) {
+        this.noview();
+        res.send('Logout function');
     };
 
-    return new Auth();
+    a.__class = controller.name.toLowerCase();
+    return a;
 }());
 
 module.exports = Auth;

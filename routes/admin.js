@@ -4,14 +4,16 @@ var router = express.Router();
 var utils = require('../scripts/util');
 var Admin = require('../controllers/admin');
 
-// Capture  request
 var regex = utils.urlRegex(Admin);
-router.get('/', Admin.index);
 
+// Index page
+router.get('/', function (req, res, next) {
+	Admin._init(req, res, next)
+});
+
+// other methods
 router.get(regex, function (req, res, next) {
-
-    var method = req.url.match(regex)[1];
-    Admin[method](req, res, next);
+	Admin._init(req, res, next)
 });
 
 module.exports = router;

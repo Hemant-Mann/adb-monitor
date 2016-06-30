@@ -21,7 +21,7 @@ var utils = {
 
         regexString += '^/(';
         regexString += properties.join('|');
-        regexString += ')$';
+        regexString += ')\.?(html|json)?$';
 
         return new RegExp(regexString);
     }
