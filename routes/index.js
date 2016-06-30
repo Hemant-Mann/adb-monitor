@@ -1,39 +1,12 @@
 var express = require('express');
 var router = express.Router();
 
-var utils = require('../scripts/util');
+var Utils = require('../scripts/util');
 var track = require('../controllers/tracking');
-
-/**
- * Home Controller
- */
-var Home = (function () {
-    'use strict';
-
-    function Home() {
-
-    }
-
-    Home.prototype = {
-        index: function (req, res, next) {
-            res.send('Index function');
-        },
-        support: function (req, res, next) {
-            res.send('support function');
-        },
-        contact: function (req, res, next) {
-            res.send('contact function');
-        },
-        privacy: function (req, res, next) {
-            res.send('privacy function');
-        }
-    };
-
-    return new Home();
-}());
+var Home = require('../controllers/home');
 
 // Capture  request
-var regex = utils.urlRegex(Home);
+var regex = Utils.urlRegex(Home);
 router.get('/', Home.index);
 
 router.get(regex, function (req, res, next) {

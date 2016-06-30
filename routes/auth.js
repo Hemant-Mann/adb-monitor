@@ -2,28 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var utils = require('../scripts/util');
-
-/**
- * Auth Controller
- */
-var Auth = (function () {
-    'use strict';
-
-    function Auth() {
-
-    }
-
-    Auth.prototype = {
-        login: function (req, res, next) {
-            res.send('Login function');
-        },
-        logout: function (req, res, next) {
-            res.send('Logout function');
-        }
-    };
-
-    return new Auth();
-}());
+var Auth = require('../controllers/auth');
 
 // Capture  request
 var regex = utils.urlRegex(Auth);

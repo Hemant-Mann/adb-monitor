@@ -2,25 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var utils = require('../scripts/util');
-
-/**
- * Admin Controller
- */
-var Admin = (function () {
-    'use strict';
-
-    function Admin() {
-
-    }
-
-    Admin.prototype = {
-        index: function (req, res, next) {
-            res.send('Index function');
-        }
-    };
-
-    return new Admin();
-}());
+var Admin = require('../controllers/admin');
 
 // Capture  request
 var regex = utils.urlRegex(Admin);

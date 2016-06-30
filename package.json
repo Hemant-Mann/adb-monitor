@@ -8,6 +8,7 @@
   "dependencies": {
     "body-parser": "~1.13.2",
     "cookie-parser": "~1.3.5",
+    "connect-flash": "~0.1.1",
     "debug": "~2.2.0",
     "ejs": "^2.4.1",
     "express": "~4.13.1",
@@ -15,6 +16,8 @@
     "geoip-lite": "^1.1.7",
     "mongoose": "^4.4.11",
     "morgan": "~1.6.1",
+    "passport": "^0.2.2",
+    "passport-local": "^1.0.0",
     "serve-favicon": "~2.3.0",
     "ua-parser-js": "^0.7.10",
     "utf8": "^2.1.1"

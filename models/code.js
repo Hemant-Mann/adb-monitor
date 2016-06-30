@@ -3,9 +3,20 @@ var Schema = mongoose.Schema;
 
 // create a schema
 var codeSchema = new Schema({
-    user_id: Schema.Types.ObjectId,
-    domain: String,
-    name: String
+    user_id: {
+    	type: Schema.Types.ObjectId,
+    	index: true,
+    	required: true
+    },
+    domain: {
+    	type: String,
+    	index: true,
+    	required: true
+    },
+    name: {
+    	type: String,
+    	required: true
+    }
 }, { collection: 'codes' });
 
 

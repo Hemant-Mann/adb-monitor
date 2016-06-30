@@ -3,9 +3,24 @@ var Schema = mongoose.Schema;
 
 // create a schema
 var statSchema = new Schema({
-    code_id: Schema.Types.ObjectId,
-    pageviews: Number,
-    blocked: Number
+    code_id: {
+    	type: Schema.Types.ObjectId,
+    	index: true,
+    	required: true
+    },
+    pageviews: {
+    	type: Number,
+    	required: true
+    },
+    blocked: {
+    	type: Number,
+    	required: true
+    },
+    device: {
+    	type: String,
+    	index: true,
+    	required: true
+    }
 }, { collection: 'stats' });
 
 
