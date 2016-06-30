@@ -1,6 +1,7 @@
 var Shared = require('./controller');
 var User = require('../models/user');
 var Utils = require('../scripts/util');
+var passport = require('passport');
 
 /**
  * Auth Controller
@@ -32,20 +33,41 @@ var Auth = (function () {
                 }
             });
             return;
+        } else {
+            cb();
         }
-        cb(null);
     };
     
-    a.login = function (req, res, next) {
-        this.view.validations = {
-            name: "required",
-            email: "greater than 3 chars"
-        };
+    a.login = function (req, res, cb) {
+        this.view.message = null;
+        var self = this;
+
+        if (req.method === 'POST') {
+            passport.authenticate('local', function (err, user, info) {
+                if (err) {
+                    return cb({message: "Internal Server Error", fatal: true});
+                }
+
+                if (!user) {
+                    return cb(info);
+                }
+
+                req.login(user, function(err) {
+                    if (err) return cb(err);
+
+                    console.log(req.session);
+                    return res.redirect('/');
+                });
+            })(req, res);
+        } else {
+            cb();
+        }
     };
     
-    a.logout = function (req, res, next) {
+    a.logout = function (req, res, cb) {
         this.noview();
         res.send('Logout function');
+        cb();
     };
 
     a.__class = controller.name.toLowerCase();

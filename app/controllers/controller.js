@@ -46,10 +46,15 @@ var Controller = (function () {
             self[method](req, res, function (err, success) {
                 if (err) {
                     self.view.message = err.message;
-                } else {
+                } else if (success) {
                     self.view.success = success;   
                 }
-                self._render(res, next);
+
+                if (err && err.fatal) {
+                    next(err);
+                } else {
+                    self._render(res, next);
+                }
             });
         },
         _noview: function () {

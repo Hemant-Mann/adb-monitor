@@ -1,11 +1,14 @@
-var passport = require('passport'),
-    mongoose = require('mongoose');
+var mongoose = require('mongoose');
 
-module.exports = function () {
+module.exports = function (passport) {
     var User = mongoose.model('User');
+    
+     // used to serialize the user for the session
     passport.serializeUser(function (user, done) {
-        done(null, user.id);
+        done(null, user);
     });
+    
+    // used to deserialize the user
     passport.deserializeUser(function (id, done) {
         User.findOne({
             _id: id
@@ -13,5 +16,6 @@ module.exports = function () {
             done(err, user);
         });
     });
-    require('./strategies/local.js')();
+
+    require('./strategies/local')(passport);
 };

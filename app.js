@@ -7,10 +7,12 @@ var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var passport = require('passport');
 var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 
 var routes = require('./app/routes/index'),
   mongoose = require('mongoose'),
-  config = require('./config');
+  config = require('./config'),
+  db = require('./mongoose')();
 
 // Routes
 var authRoutes = require('./app/routes/auth'),
@@ -26,16 +28,20 @@ app.set('view engine', 'ejs');
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(session({
   secret: config.session_secret,
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: true }
+  store: new MongoStore({ mongooseConnection: mongoose.connection, ttl: 14 * 24 * 60 * 60 }),
+  cookie: {
+    path: '/',
+    maxAge: 24 * 60 * 60 * 1000,
+    httpOnly: true
+  }
 }));
 app.use(flash());
+require('./app/config/passport')(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
