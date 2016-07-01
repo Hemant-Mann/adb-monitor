@@ -6,7 +6,6 @@ var Auth = require('../controllers/auth');
 
 // Capture  request
 var regex = Utils.urlRegex(Auth);
-
 router.get(regex, function (req, res, next) {
 	Auth._init(req, res, next)
 });

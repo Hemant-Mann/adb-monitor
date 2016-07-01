@@ -44,29 +44,6 @@ var utils = {
 
         return new RegExp(regexString);
     },
-    getErrorMessage: function (err) {
-        var message = '',
-            errName;
-
-        if (err.code) {
-            switch (err.code) {
-                case 11000:
-                case 11001:
-                    message = 'Username already exists';
-                    break;
-
-                default:
-                    message = 'Something went wrong';
-            }
-        } else {
-            for (errName in err.errors) {
-                if (err.errors[errName].message) {
-                    message = err.errors[errName].message;
-                }
-            }
-        }
-        return message;
-    },
     validationMsg: function (field, type, opts) {
         var msg = "";
         switch (type) {
@@ -97,7 +74,7 @@ var utils = {
                 break;
 
             case 400:
-                obj.message = "Error Processing request";
+                obj.message = "Invalid Request";
                 break;
 
             case 200:
@@ -107,13 +84,33 @@ var utils = {
 
         return obj;
     },
-    getExtension: function (url) {
+    /**
+     * GetExtension from the current URL
+     * @param  {String} url Path URL eg: '/auth/login'
+     * @param  {String} def Default extension eg: "html"
+     * @return {String}     Returns the extension of the page
+     */
+    getExtension: function (url, def) {
+        if (!url) return def || "html";
         var parts = url.split(".");
+
+        if (parts.length == 1) {
+            return def || "html";
+        }
         return parts.pop();
     },
     parseParam: function (param) {
+        if (!param) return "";
         var parts = param.split(".");
         return parts[0];
+    },
+    copyObj: function (obj) {
+        var o = {}, prop;
+
+        for (prop in obj) {
+            o[prop] = obj[prop];
+        }
+        return o;
     }
 };
 

@@ -6,7 +6,15 @@ var visitSchema = new Schema({
     code_id: Schema.Types.ObjectId,
     cookie: String,
     unique: Number,
-    total: Number
+    total: Number,
+    created: {
+        type: Date,
+        index: true
+    },
+    modified: {
+        type: Date,
+        default: Date.now
+    }
 }, { collection: 'visitors' });
 
 visitSchema.statics.process = function (opts, cb) {

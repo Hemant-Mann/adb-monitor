@@ -28,14 +28,20 @@ var UserSchema = new Schema({
     salt: String,
     created: {
         type: Date,
-        default: Date.now,
         index: true
     },
     modified: {
         type: Date,
         default: Date.now
     },
-    admin: Boolean
+    admin: {
+        type: Boolean,
+        default: false
+    },
+    live: {
+        type: Boolean,
+        default: false
+    }
 }, { collection: 'users' });
 
 UserSchema.methods.authenticate = function (password) {

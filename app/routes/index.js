@@ -5,13 +5,13 @@ var Utils = require('../scripts/util');
 // var track = require('../controllers/tracking');
 var Home = require('../controllers/home');
 
-var regex = Utils.urlRegex(Home);
 // Home Page
 router.get('/', function (req, res, next) {
-	Home._init(req, res, next)
+	Home._init(req, res, next, {method: 'index'})
 });
 
 // Controller - methods
+var regex = Utils.urlRegex(Home);
 router.get(regex, function (req, res, next) {
 	Home._init(req, res, next)
 });

@@ -16,6 +16,19 @@ var codeSchema = new Schema({
     name: {
     	type: String,
     	required: true
+    },
+    created: {
+        type: Date,
+        default: Date.now,
+        index: true
+    },
+    modified: {
+        type: Date,
+        default: Date.now
+    },
+    live: {
+        type: Boolean,
+        default: false
     }
 }, { collection: 'codes' });
 

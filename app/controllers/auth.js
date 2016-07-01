@@ -55,7 +55,7 @@ var Auth = (function () {
                 req.login(user, function(err) {
                     if (err) return cb(err);
 
-                    var url = '/';
+                    var url = '/platforms';
                     if (req.session.previousPath) {
                         url = req.session.previousPath
                         delete req.session.previousPath;

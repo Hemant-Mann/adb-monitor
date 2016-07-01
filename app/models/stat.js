@@ -20,6 +20,15 @@ var statSchema = new Schema({
     	type: String,
     	index: true,
     	required: true
+    },
+    created: {
+        type: Date,
+        default: Date.now,
+        index: true
+    },
+    modified: {
+        type: Date,
+        default: Date.now
     }
 }, { collection: 'statistics' });
 

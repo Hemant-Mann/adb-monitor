@@ -31,27 +31,23 @@ var Controller = (function () {
      * @type {Object}
      */
     Controller.prototype = {
-        _init: function (req, res, next) {
+        _init: function (req, res, next, opts) {
+            if (!opts) opts = {};
             var self = this,
-                method = (self.method) || (req.params[0] || null);
+                method = opts.method || (req.params[0]);
 
             if (!method) {
-                if (req.url === '/') {
-                    method = 'index';
-                } else {
-                    return next(new Error("Invalid URL"));
-                }
+                return next(new Error("Invalid URL"));
             }
             self.method = method.toLowerCase();
             self.defaultExtension = Utils.getExtension(req.originalUrl);
 
             if (self.secure.length > 0 && self.secure.indexOf(self.method) !== -1) {
-                self._secure(req, res);
+                if (!self._secure(req, res)) {
+                    return res.redirect('/auth/login');
+                }
             }
-            if (req.user) { // set user to all the views
-                self.view.user = req.user;
-            }
-
+            
             self[method](req, res, function (err, success) {
                 if (err) {
                     self.view.message = err.message;
@@ -60,7 +56,7 @@ var Controller = (function () {
                 }
 
                 if (err && err.fatal) {
-                    next(err);
+                    return next(err);
                 } else {
                     self._render(res, next);
                 }
@@ -77,11 +73,12 @@ var Controller = (function () {
             var self = this,
                 template = self.defaultLayout,
                 action = self.__class +'/' + self.method,
-                view = self.view;
+                view = Utils.copyObj(self.view);
 
-            view.__action = action;
             if (self.defaultExtension == "html") {
+                view.__action = action;
                 view.seo = self.seo;
+                
                 if (this.willRenderLayoutView) {
                     view.__action = '../' + view.__action;
                     res.render(template, view);
@@ -101,14 +98,16 @@ var Controller = (function () {
          * Basic Implementation for authorization, Can be override to suit particular
          * controller requirements for authorization
          * @param  {Object} req Express Request Object
-         * @param  {Object} res Express Response Objet
-         * @return {Null}     Redirects the user if not loggedIn
+         * @return {Boolean} False on failure else sets user to views
          */
-        _secure: function (req, res) {
+        _secure: function (req) {
             if (!req.user) {
                 req.session.previousPath = req.originalUrl
-                res.redirect('/auth/login');
+                return false;
             }
+
+            this.view.user = req.user;
+            return true;
         }
     };
 

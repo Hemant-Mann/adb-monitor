@@ -17,7 +17,7 @@ var routes = require('./app/routes/index'),
 // Routes
 var authRoutes = require('./app/routes/auth'),
   adminRoutes = require('./app/routes/admin'),
-  platformRoutes = require('./app/routes/platform');
+  platformRoutes = require('./app/routes/platforms');
 
 var app = express();
 
