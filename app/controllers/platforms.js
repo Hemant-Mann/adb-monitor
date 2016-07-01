@@ -120,7 +120,7 @@ var Platforms = (function () {
             return cb(Utils.commonMsg(400));
         }
 
-        var code = '<script type="text/javascript">(function() {window.__adbMonID = "'+ _id +'";function l(u) {var e = document.createElement("script");e.type = "text/javascript";e.src = "//localhost:3000/js/" + u;e.async = true;var x = document.getElementsByTagName("script")[0];x.parentNode.insertBefore(e, x);}l("adbmon.js");})();</script>';
+        var code = '<script type="text/javascript">(function() {window.__adbMonID = "'+ _id +'";function l(u) {var e = document.createElement("script");e.type = "text/javascript";e.src = "//localhost:3000/js/" + u;e.async = true;var x = document.getElementsByTagName("script")[0];x.parentNode.insertBefore(e, x);}l("adbmon.min.js");})();</script>';
         this.view.code = code;
         cb(null);
 

@@ -40,7 +40,8 @@ var UserSchema = new Schema({
     },
     live: {
         type: Boolean,
-        default: false
+        default: false,
+        index: true
     }
 }, { collection: 'users' });
 

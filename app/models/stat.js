@@ -8,22 +8,26 @@ var statSchema = new Schema({
     	index: true,
     	required: true
     },
-    pageviews: {
+    blocking: {
     	type: Number,
     	required: true
     },
-    blocked: {
-    	type: Number,
-    	required: true
+    allowing: {
+        type: Number,
+        required: true
     },
-    device: {
+    browser: {
     	type: String,
     	index: true,
     	required: true
     },
+    device: {
+        type: String,
+        index: true,
+        required: true
+    },
     created: {
         type: Date,
-        default: Date.now,
         index: true
     },
     modified: {
@@ -31,6 +35,29 @@ var statSchema = new Schema({
         default: Date.now
     }
 }, { collection: 'statistics' });
+
+statSchema.statics.process = function (query, opts) {
+    var self = this;
+    self.findOne(query, function (err, doc) {
+        if (err) return false;
+
+        if (!doc) {
+            doc = new self(opts);
+            doc.created = Date.now();
+            doc.blocking = 0;
+            doc.allowing = 0;
+        }
+
+        // 0 => not blocked, 1 => blocked
+        if (opts.blocking === 0) {
+            doc.allowing++;
+        } else {
+            doc.blocking++;
+        }
+        doc.modified = Date.now();
+        doc.save();
+    });
+};
 
 
 var Stat = mongoose.model('Stat', statSchema);

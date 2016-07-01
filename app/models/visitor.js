@@ -5,7 +5,6 @@ var Schema = mongoose.Schema;
 var visitSchema = new Schema({
     code_id: Schema.Types.ObjectId,
     cookie: String,
-    unique: Number,
     total: Number,
     created: {
         type: Date,
@@ -20,16 +19,23 @@ var visitSchema = new Schema({
 visitSchema.statics.process = function (opts, cb) {
 	var self = this;
 	self.findOne({ code_id: opts.code_id, cookie: opts.cookie }, function (err, visitor) {
-		if (err) return cb(true, null);
+		if (err) return cb(true);
 
 		if (!visitor) {
 			visitor = new self({
 				code_id: opts.code_id,
-				cookie: opts.cookie
+				cookie: opts.cookie,
+                total: 0,
+                created: Date.now()
 			});
 		}
+
+        visitor.total += 1;
+        visitor.modified = Date.now();
+        visitor.save();
+        cb(false);
 	});
-}
+};
 
 var Visitor = mongoose.model('Visitor', visitSchema);
 module.exports = Visitor;

@@ -28,7 +28,8 @@ var codeSchema = new Schema({
     },
     live: {
         type: Boolean,
-        default: false
+        default: false,
+        index: true
     }
 }, { collection: 'codes' });
 
