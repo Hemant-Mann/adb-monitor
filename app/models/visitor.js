@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 // create a schema
 var visitSchema = new Schema({
-    code_id: Schema.Types.ObjectId,
+    cid: Schema.Types.ObjectId,
     cookie: String,
     total: Number,
     created: {
@@ -18,12 +18,12 @@ var visitSchema = new Schema({
 
 visitSchema.statics.process = function (opts, cb) {
 	var self = this;
-	self.findOne({ code_id: opts.code_id, cookie: opts.cookie }, function (err, visitor) {
+	self.findOne({ cid: opts.cid, cookie: opts.cookie }, function (err, visitor) {
 		if (err) return cb(true);
 
 		if (!visitor) {
 			visitor = new self({
-				code_id: opts.code_id,
+				cid: opts.cid,
 				cookie: opts.cookie,
                 total: 0,
                 created: Date.now()

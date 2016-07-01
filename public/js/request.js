@@ -1,12 +1,17 @@
+/**
+ * Request Library a wrapper around jQuery Ajax
+ * @param  {Object} window The Global window object
+ * @param  {function} $      jQuery function
+ * @return {Object}        A new object of the library
+ */
 (function (window, $) {
     var Request = (function () {
-        var api = window.location.origin + '/';
-        var ext = '.json';
         
+        $.ajaxSetup({});
+
         function Request() {
-            $.ajaxSetup({
-                
-            });
+            this.api = window.location.origin + '/'; // Api EndPoint
+            this.extension = '.json';
             
             this.entityMap = {
                "&": "&amp;",
@@ -28,11 +33,11 @@
         Request.prototype = {
             post: function (opts, callback) {
                 var self = this,
-                    link = api + this._clean(opts.action) + ext;
+                    link = this.api + this._clean(opts.url) + this.extension;
                 $.ajax({
                     url: link,
                     type: 'POST',
-                    data: opts.data,
+                    data: opts.data || {},
                 }).done(function (data) {
                     callback.call(self, null, data);
                 }).fail(function () {
@@ -41,26 +46,20 @@
             },
             get: function (opts, callback) {
                 var self = this,
-                    link = api + this._clean(opts.action) + ext;
+                    link = this.api + this._clean(opts.url) + this.extension;
                 $.ajax({
                     url: link,
                     type: 'GET',
-                    data: opts.data || "",
+                    data: opts.data || {},
                 }).done(function (data) {
                     callback.call(self, null, data);
                 }).fail(function () {
                     callback.call(self, "error", {});
                 });
             },
-            _clean: function (entity) {
-                if (!entity || entity.length === 0) {
-                    return "";
-                }
-                return entity.replace(/\./g, '');
-            },
             delete: function (opts, callback) {
                 var self = this,
-                    link = api + this._clean(opts.action) + ext;
+                    link = this.api + this._clean(opts.url) + this.extension;
 
                 $.ajax({
                    url: link,
@@ -72,9 +71,16 @@
                }).fail(function () {
                    callback.call(self, "error", {});
                });
-            }
+            },
+            _clean: function (entity) {
+                if (!entity || entity.length === 0) {
+                    return "";
+                }
+                return entity.replace(/\./g, '');
+            },
         };
         return Request;
     }());
-    window.Request = new Request();
+    // Because window.Request is already taken
+    window.request = new Request();
 }(window, jQuery));

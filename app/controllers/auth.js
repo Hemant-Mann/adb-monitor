@@ -22,6 +22,7 @@ var Auth = (function () {
                 return cb(new Error("Password's Don't Match"));
             }
             var user = new User(req.body);
+            user.live = true;
 
             user.save(function (err, user) {
                 if (err) {

@@ -24,7 +24,7 @@ var Platforms = (function () {
         self.view.message = null;
         self.view.platforms = [];
 
-        Code.find({}, function (err, codes) {
+        Code.find({uid: req.user._id}, function (err, codes) {
             if (err) {
                 return cb(Utils.commonMsg(500));
             }
@@ -95,7 +95,7 @@ var Platforms = (function () {
 
         if (req.method === 'POST') {
             var platform = new Code(req.body);
-            platform.user_id = req.user._id;
+            platform.uid = req.user._id;
             platform.live = true;
 
             platform.save(function (err, p) {

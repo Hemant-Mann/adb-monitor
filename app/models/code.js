@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 // create a schema
 var codeSchema = new Schema({
-    user_id: {
+    uid: {
     	type: Schema.Types.ObjectId,
     	index: true,
     	required: true
@@ -36,7 +36,7 @@ var codeSchema = new Schema({
 // pre + post middleware of Mongoose schema
 codeSchema.pre('save', function (next) {
     var self = this;
-    mongoose.model('Code').findOne({user_id: self.user_id, domain: self.domain.toLowerCase()}, function(err, code) {
+    mongoose.model('Code').findOne({uid: self.uid, domain: self.domain.toLowerCase()}, function(err, code) {
         if (err) return next(new Error("Internal Server Error"));
         if (code) return next(new Error("Platform already exists"));
 

@@ -3,16 +3,16 @@ var Schema = mongoose.Schema;
 
 // create a schema
 var statSchema = new Schema({
-    code_id: {
+    cid: {
     	type: Schema.Types.ObjectId,
     	index: true,
     	required: true
     },
-    blocking: {
+    block: {
     	type: Number,
     	required: true
     },
-    allowing: {
+    allow: {
         type: Number,
         required: true
     },
@@ -44,15 +44,15 @@ statSchema.statics.process = function (query, opts) {
         if (!doc) {
             doc = new self(opts);
             doc.created = Date.now();
-            doc.blocking = 0;
-            doc.allowing = 0;
+            doc.block = 0;
+            doc.allow = 0;
         }
 
         // 0 => not blocked, 1 => blocked
-        if (opts.blocking === 0) {
-            doc.allowing++;
+        if (opts.block === 0) {
+            doc.allow++;
         } else {
-            doc.blocking++;
+            doc.block++;
         }
         doc.modified = Date.now();
         doc.save();

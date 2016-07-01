@@ -44,7 +44,7 @@ $(document).ready(function() {
 
         var link = self.attr('href') || self.data('href');
         console.log(link);
-        Request.delete({action: link}, function (err, data) {
+        request.delete({url: link}, function (err, data) {
             if (err) {
                 console.log(err);
                 return alert(self.data('error-msg') || 'Failed to delete');
@@ -58,8 +58,8 @@ $(document).ready(function() {
         e.preventDefault();
 
         var self = $(this);
-        Request.get({
-            action: self.attr('href'),
+        request.get({
+            url: self.attr('href'),
             data: {id: self.data('id')}
         }, function (err, data) {
             if (err || data.message) {

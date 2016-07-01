@@ -36,10 +36,10 @@ var Tracking = {
             if (code.domain !== host) return cb(false);
 
             // Now check device
-            User.findOne({ _id: code.user_id, live: true }, function (err, user) {
+            User.findOne({ _id: code.uid, live: true }, function (err, user) {
                 if (!user) return cb(false);
 
-                cb(true, { code_id: code._id });
+                cb(true, { cid: code._id });
             });
         });
     },
@@ -61,15 +61,14 @@ var Tracking = {
         if (this._isMobile(ua)) {
             device = 'mobile';
         }
-
         // Check Visitor
-        Visitor.process({ cookie: params.ckid, code_id: opts.code_id }, function (err) {
+        Visitor.process({ cookie: params.ckid, cid: opts.cid }, function (err) {
             if (err) return false;
 
-            var query = { code_id: opts.code_id, browser: browser, device: device };
+            var query = { cid: opts.cid, browser: browser, device: device };
             var options = Utils.copyObj(query);
 
-            options.blocking = Number(params.b);
+            options.block = Number(params.b);
             Stat.process(query, options);   // Process that stats
         });
     }
