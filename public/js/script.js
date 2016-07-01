@@ -50,8 +50,25 @@ $(document).ready(function() {
                 return alert(self.data('error-msg') || 'Failed to delete');
             }
 
-            data = JSON.parse(data);
             window.location.href = window.location.href;
+        });
+    });
+
+    $('.getCode').on('click', function (e) {
+        e.preventDefault();
+
+        var self = $(this);
+        Request.get({
+            action: self.attr('href'),
+            data: {id: self.data('id')}
+        }, function (err, data) {
+            if (err || data.message) {
+                return console.log(err || data.message);
+            }
+
+            var $modal = $('#showCode');
+            $('#codeHolder').html(this.escapeHtml(data.code));
+            $modal.modal('show');
         });
     });
 });

@@ -1,3 +1,4 @@
+<%- include modals/code.html %>
 <div id="page-wrapper">
     <div class="container-fluid">
         <div class="row">
@@ -47,6 +48,8 @@
                                             <% } %>
                                         </td>
                                         <td>
+                                            <a href="platforms/getCode" data-id="<%= platforms[i]._id %>" class="getCode btn btn-default btn-xs"><i class="fa fa-code"></i> Get Code</a>
+
                                             <% if (platforms[i].live) { %>
                                             <a href="/platforms/update/<%= platforms[i]._id %>" class="btn btn-warning btn-xs"><i class="fa fa-eye-slash"></i> Disable</a>
                                             <% } else { %>

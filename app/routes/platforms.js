@@ -10,7 +10,7 @@ router.get('/', function (req, res, next) {
 });
 
 // Controller - methods
-var regex = Utils.makeRegex(['index'], ['html', 'json']);
+var regex = Utils.makeRegex(['index', 'getCode'], ['html', 'json']);
 router.get(regex, function (req, res, next) {
 	Platforms._init(req, res, next);
 });

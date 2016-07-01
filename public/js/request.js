@@ -5,8 +5,24 @@
         
         function Request() {
             $.ajaxSetup({
-                headers: {'X-JSON-Api': 'SwiftMVC'}
-            });   
+                
+            });
+            
+            this.entityMap = {
+               "&": "&amp;",
+               "<": "&lt;",
+               ">": "&gt;",
+               '"': '&quot;',
+               "'": '&#39;',
+               "/": '&#x2F;'
+             };
+
+            this.escapeHtml = function escapeHtml(string) {
+                var self = this;
+                return String(string).replace(/[&<>"'\/]/g, function (s) {
+                    return self.entityMap[s];
+                });
+            };
         }
 
         Request.prototype = {
@@ -18,9 +34,9 @@
                     type: 'POST',
                     data: opts.data,
                 }).done(function (data) {
-                    callback.call(self, data, null);
+                    callback.call(self, null, data);
                 }).fail(function () {
-                    callback.call(self, null, "error");
+                    callback.call(self, "error", {});
                 });
             },
             get: function (opts, callback) {
@@ -31,9 +47,9 @@
                     type: 'GET',
                     data: opts.data || "",
                 }).done(function (data) {
-                    callback.call(self, data, null);
+                    callback.call(self, null, data);
                 }).fail(function () {
-                    callback.call(self, null, "error");
+                    callback.call(self, "error", {});
                 });
             },
             _clean: function (entity) {
@@ -52,9 +68,9 @@
                    data: opts.data || {}
                })
                .done(function (data) {
-                   callback.call(self, data, null);
+                   callback.call(self, null, data);
                }).fail(function () {
-                   callback.call(self, null, "error");
+                   callback.call(self, "error", {});
                });
             }
         };
