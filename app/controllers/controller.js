@@ -1,4 +1,6 @@
 var Utils = require('../scripts/util');
+var urlParser = require('url');
+
 /**
  * Shared Controller
  */
@@ -37,10 +39,11 @@ var Controller = (function () {
                 method = opts.method || (req.params[0]);
 
             if (!method) {
-                return next(new Error("Invalid URL"));
+                var err = new Error("Invalid URL"); err.status = 400;
+                return next(err);
             }
             self.method = method.toLowerCase();
-            self.defaultExtension = Utils.getExtension(req.originalUrl);
+            self.defaultExtension = Utils.getExtension(req.url);
 
             if (self.secure.length > 0 && self.secure.indexOf(self.method) !== -1) {
                 if (!self._secure(req, res)) {
@@ -55,7 +58,7 @@ var Controller = (function () {
                     self.view.success = success;   
                 }
 
-                if (err && err.fatal) {
+                if (err && err instanceof Error) {
                     return next(err);
                 } else {
                     self._render(res, next);
@@ -92,6 +95,10 @@ var Controller = (function () {
                     return false;
                 }
                 res.json(self.view);
+            } else {
+                var err = new Error("Invalid URL");
+                err.status = 400;
+                next(err);
             }
         },
         /**

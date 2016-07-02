@@ -71,6 +71,46 @@ var Tracking = {
             options.block = Number(params.b);
             Stat.process(query, options);   // Process that stats
         });
+    },
+    display: function (cid, created, cb) {
+        var s = {}, total = { allowing: 0, blocking: 0, visitors: 0, pageviews: 0 };
+        Stat.find({
+            cid: cid,
+            created: created
+        }, function (err, stats) {
+            if (err) return cb(500);
+            
+            if (!stats || stats.length === 0) {
+                return cb(true, {
+                    stats: {},
+                    total: total
+                });
+            }
+
+            stats.forEach(function (record) {
+                s[Utils.today(record.created)] = {
+                    blocking: record.block,
+                    allowing: record.allow,
+                };
+
+                total.allowing += record.allow;
+                total.blocking += record.block;
+
+                total.pageviews += total.allowing + total.blocking;
+            });
+            Visitor.find({ cid: cid, created: created }, function (err, v) {
+                if (err) return cb(Utils.commonMsg(500));
+
+                v.forEach(function (record) {
+                    total.visitors++;
+                });
+
+                return cb(false, {
+                    stats: s,
+                    total: total
+                });
+            });
+        });
     }
 };
 
@@ -85,4 +125,6 @@ var execute = function (req, res, next) {
     res.redirect('/img/_blue.gif');
 };
 
-module.exports = execute;
+exports.execute = execute;
+
+exports.display = Tracking.display;

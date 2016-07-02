@@ -3,7 +3,7 @@ var router = express.Router();
 
 var Utils = require('../scripts/util');
 var Home = require('../controllers/home');
-var track = require('../controllers/tracking');
+var track = require('../controllers/tracking').execute;
 
 // Home Page
 router.get('/', function (req, res, next) {

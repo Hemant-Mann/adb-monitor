@@ -97,5 +97,55 @@ $(document).ready(function() {
             });
         });
     });
+
+    if ($('#morris-area-chart').length > 0) {
+        var start = new Date(); start.setMonth(start.getMonth() - 1);
+        var end = new Date(); end.setMonth(end.getMonth() - 1);
+
+        var pid = window.location.pathname.match(/\/platforms\/(\w+)/)[1];
+        request.get({
+            url: 'platforms/' + pid + window.location.search,
+            start: today(start),
+            end: today(end)
+        }, function (err, d) {
+            if (err) return false;
+
+            var data = [], prop;
+            for (prop in d.stats) {
+                data.push({
+                    y: prop,
+                    a: d.stats[prop].allowing,
+                    b: d.stats[prop].blocking
+                });
+            }
+
+            Morris.Area({
+                element: 'morris-area-chart',
+                data: data,
+                xkey: 'y',
+                ykeys: ['a', 'b'],
+                labels: ['Allowing', 'Blocking'],
+                pointSize: 2,
+                hideHover: 'auto',
+                resize: true
+            });
+        });
+    }
+
+    function today(d) {
+        if (d) {
+            var today = d;
+        } else {
+            var today = new Date();
+        }
+        var dd = today.getDate(),
+            mm = today.getMonth() + 1, //January is 0!
+            yyyy = today.getFullYear();
+
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+        today = yyyy + '-' + mm + '-' + dd;
+        return today;
+    }
 });
 

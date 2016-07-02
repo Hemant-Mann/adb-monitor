@@ -46,7 +46,9 @@ var Auth = (function () {
         if (req.method === 'POST') {
             passport.authenticate('local', function (err, user, info) {
                 if (err) {
-                    return cb({message: "Internal Server Error", fatal: true});
+                    var err = new Error("Internal Server Error");
+                    err.type = "json"; err.status = 500;
+                    return cb(err);
                 }
 
                 if (!user) {

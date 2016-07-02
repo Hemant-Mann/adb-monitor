@@ -3,6 +3,7 @@ var Code = require('../models/code');
 var Utils = require('../scripts/util');
 var Stat = require('../models/stat');
 var Visitor = require('../models/visitor');
+var Tracking = require('./tracking');
 
 /**
  * Platforms Controller
@@ -44,19 +45,19 @@ var Platforms = (function () {
      * This function will show the stats of the given platform
      */
     p.stats = function (req, res, cb) {
-        var self = this;
+        var self = this,
+            dateQuery = Utils.dateQuery(req.query),
+            start = dateQuery.start,
+            end = dateQuery.end,
+            created = { $gte: start, $lte: end };
+
         self.view.platform = req.platform;
 
-        Stat.find({ cid: req.platform._id }, function (err, stats) {
-            if (err) return cb(Utils.commonMsg(500));
+        Tracking.display(req.platform._id, created, function (err, result) {
+            self.view.stats = result.stats;
+            self.view.total = result.total;
 
-            self.view.stats = stats;
-            Visitor.find({ cid: req.platform._id }, function (err, v) {
-                if (err) return cb(Utils.commonMsg(500));
-
-                self.view.visitors = v;
-                cb(null);
-            });
+            cb(null);
         });
     };
 
@@ -144,7 +145,9 @@ var Platforms = (function () {
     p._find = function (req, res, next) {
         Code.findOne({ _id: Utils.parseParam(req.params.id), uid: req.user._id }, function (err, code) {
             if (err || !code) {
-                return next(new Error("Platform not found"));
+                var err = new Error("Platform not found");
+                err.type = "json"; err.status = 400;
+                return next(err);
             }
 
             req.platform = code;

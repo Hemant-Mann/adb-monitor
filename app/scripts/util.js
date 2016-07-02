@@ -1,3 +1,5 @@
+var urlParser = require('url');
+
 /**
  * Contains Utility functions
  */
@@ -92,7 +94,9 @@ var utils = {
      */
     getExtension: function (url, def) {
         if (!url) return def || "html";
-        var parts = url.split(".");
+
+        var path = urlParser.parse(url).pathname
+        var parts = path.split(".");
 
         if (parts.length == 1) {
             return def || "html";
@@ -111,6 +115,51 @@ var utils = {
             o[prop] = obj[prop];
         }
         return o;
+    },
+    dateQuery: function (obj) {
+        var start, end, tmp;
+
+        start = new Date();
+        start.setHours(0, 0, 0, 0);
+
+        end = new Date();
+        end.setHours(23, 59, 59, 999);
+
+        if (obj.start) {
+            tmp = new Date(obj.start);
+
+            if (tmp !== "Invalid Date") {
+                start = tmp;
+            }
+        }
+
+        if (obj.end) {
+            tmp = new Date(obj.end);
+
+            if (tmp !== "Invalid Date") {
+                end = tmp;
+            }
+        }
+
+        return {
+            start: start,
+            end: end
+        };
+    },
+    today: function (d) {
+        if (d) {
+            var today = d;
+        } else {
+            var today = new Date();
+        }
+        var dd = today.getDate(),
+            mm = today.getMonth() + 1, //January is 0!
+            yyyy = today.getFullYear();
+
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+        today = yyyy + '-' + mm + '-' + dd;
+        return today;
     }
 };
 

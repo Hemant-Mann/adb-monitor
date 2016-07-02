@@ -28,22 +28,25 @@ var statSchema = new Schema({
     },
     created: {
         type: Date,
-        index: true
+        index: true,
+        default: Date.now()
     },
     modified: {
-        type: Date,
-        default: Date.now
+        type: Date
     }
 }, { collection: 'statistics' });
 
 statSchema.statics.process = function (query, opts) {
     var self = this;
+    var start = new Date(); start.setHours(0, 0, 0, 0);
+    var end = new Date(); end.setHours(23, 59, 59, 999);
+
+    query.created = { $gte: start, $lte: end };
     self.findOne(query, function (err, doc) {
         if (err) return false;
 
         if (!doc) {
             doc = new self(opts);
-            doc.created = Date.now();
             doc.block = 0;
             doc.allow = 0;
         }
