@@ -5,12 +5,10 @@ var Schema = mongoose.Schema;
 var codeSchema = new Schema({
     uid: {
     	type: Schema.Types.ObjectId,
-    	index: true,
     	required: true
     },
     domain: {
     	type: String,
-    	index: true,
     	required: true
     },
     name: {
@@ -20,7 +18,6 @@ var codeSchema = new Schema({
     created: {
         type: Date,
         default: Date.now,
-        index: true
     },
     modified: {
         type: Date,
@@ -29,9 +26,11 @@ var codeSchema = new Schema({
     live: {
         type: Boolean,
         default: false,
-        index: true
     }
 }, { collection: 'codes' });
+
+codeSchema.index({ uid: 1, live: 1 });
+codeSchema.index({ uid: 1, domain: 1 });
 
 // pre + post middleware of Mongoose schema
 codeSchema.pre('save', function (next) {

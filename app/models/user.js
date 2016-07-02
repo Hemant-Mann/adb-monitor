@@ -12,7 +12,6 @@ var UserSchema = new Schema({
     email: {
         type: String,
         required: [true, Utils.validationMsg('Email', 'required')],
-        index: true,
         match: [/.+\@.+\..+/, Utils.validationMsg('Email', 'regex')]
     },
     password: {
@@ -28,7 +27,7 @@ var UserSchema = new Schema({
     salt: String,
     created: {
         type: Date,
-        index: true
+        default: Date.now
     },
     modified: {
         type: Date,
@@ -40,10 +39,12 @@ var UserSchema = new Schema({
     },
     live: {
         type: Boolean,
-        default: false,
-        index: true
+        default: false
     }
 }, { collection: 'users' });
+
+UserSchema.index({ email: 1 });
+UserSchema.index({ _id: 1, live: 1 });
 
 UserSchema.methods.authenticate = function (password) {
     return this.password === this.hashPassword(password);

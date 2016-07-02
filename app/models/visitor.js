@@ -16,10 +16,13 @@ var visitSchema = new Schema({
     created: {
         type: Date,
         index: true,
-        default: Date.now()
+        default: Date.now
     },
     modified: Date
 }, { collection: 'visitors' });
+
+visitSchema.index({ cid: 1, cookie: 1, created: 1 });
+visitSchema.index({ cid: 1, created: 1 });
 
 visitSchema.statics.process = function (opts, cb) {
 	var self = this;

@@ -29,12 +29,17 @@ var statSchema = new Schema({
     created: {
         type: Date,
         index: true,
-        default: Date.now()
+        default: Date.now
     },
     modified: {
         type: Date
     }
 }, { collection: 'statistics' });
+
+statSchema.index({ cid: 1, browser: 1, device: 1, created: 1 });
+statSchema.index({ cid: 1, created: 1 });
+statSchema.index({ cid: 1, created: 1, browser: 1 });
+statSchema.index({ cid: 1, created: 1, device: 1 });
 
 statSchema.statics.process = function (query, opts) {
     var self = this;

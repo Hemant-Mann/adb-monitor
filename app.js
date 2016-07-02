@@ -37,7 +37,7 @@ app.use(session({
   resave: true,
   saveUninitialized: false,
   secret: config.session_secret,
-  store: new MongoStore({ mongooseConnection: mongoose.connection, ttl: 14 * 24 * 60 * 60 }),
+  store: new MongoStore({ mongooseConnection: mongoose.connection, clear_interval: 3600 }),
   cookie: {
     path: '/',
     maxAge: 24 * 60 * 60 * 1000,
