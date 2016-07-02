@@ -36,22 +36,32 @@ $(function() {
 $(document).ready(function() {
     $('.delete').on('click', function (e) {
         e.preventDefault();
-
-        var self = $(this);
+        var self = $(this), message = "";
+        
         if (!self.attr('href') && !self.data('href')) {
             return false;
         }
 
-        var link = self.attr('href') || self.data('href');
-        console.log(link);
-        request.delete({url: link}, function (err, data) {
-            if (err) {
-                console.log(err);
-                return alert(self.data('error-msg') || 'Failed to delete');
-            }
+        if (self.data('message')) {
+            message += self.data('message');
+        } else {
+            message += 'Are you sure, you want to proceed with the action?!';
+        }
 
-            window.location.href = window.location.href;
-        });
+        bootbox.confirm(message, function (ans) {
+            if (!ans) return;
+
+            var link = self.attr('href') || self.data('href');
+            request.delete({url: link}, function (err, data) {
+                if (err) {
+                    return bootbox.alert(err);
+                }
+
+                bootbox.alert(data.message, function () {
+                    window.location.href = window.location.href;
+                });
+            });
+        }); 
     });
 
     $('.getCode').on('click', function (e) {
@@ -63,12 +73,28 @@ $(document).ready(function() {
             data: {id: self.data('id')}
         }, function (err, data) {
             if (err || data.message) {
-                return console.log(err || data.message);
+                return bootbox.alert(err || data.message);
             }
 
             var $modal = $('#showCode');
             $('#codeHolder').html(this.escapeHtml(data.code));
             $modal.modal('show');
+        });
+    });
+
+    $('.update').on('click', function (e) {
+        e.preventDefault();
+
+        var self = $(this);
+
+        request.post({ url: self.attr('href'), data: self.data('update') }, function (err, d) {
+            if (err) {
+                return bootbox.alert(err);
+            }
+
+            bootbox.alert(d.message, function() {
+                window.location.href = window.location.href;
+            });
         });
     });
 });

@@ -36,13 +36,9 @@ var codeSchema = new Schema({
 // pre + post middleware of Mongoose schema
 codeSchema.pre('save', function (next) {
     var self = this;
-    mongoose.model('Code').findOne({uid: self.uid, domain: self.domain.toLowerCase()}, function(err, code) {
-        if (err) return next(new Error("Internal Server Error"));
-        if (code) return next(new Error("Platform already exists"));
 
-        self.domain = self.domain.toLowerCase();
-        next();
-    });
+    self.domain = self.domain.toLowerCase();
+    next();
 });
 
 var Code = mongoose.model('Code', codeSchema);
