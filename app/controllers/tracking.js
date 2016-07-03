@@ -23,7 +23,7 @@ var Tracking = {
         hostRegex = new RegExp(host);
 
         // Check if params sent by script match with those requesting the resource
-        if (host !== req.headers['host'] || ua !== req.headers['user-agent']) return cb(false);
+        if (ua !== req.headers['user-agent']) return cb(false);
         
         // If No referer then return Or Referer doesn't contain the host
         if (!referer || !referer.match(hostRegex)) return cb(false);
@@ -100,10 +100,12 @@ var Tracking = {
             });
             Visitor.find({ cid: cid, created: created }, function (err, v) {
                 if (err) return cb(Utils.commonMsg(500));
+                var unique = {}, prop;
 
                 v.forEach(function (record) {
-                    total.visitors++;
+                    unique[record.cookie] = record;
                 });
+                for (prop in unique) total.visitors++;
 
                 return cb(false, {
                     stats: s,

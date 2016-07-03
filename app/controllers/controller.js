@@ -38,6 +38,8 @@ var Controller = (function () {
             var self = this,
                 method = opts.method || (req.params[0]);
 
+            self.view = {};
+
             if (!method) {
                 var err = new Error("Invalid URL"); err.status = 400;
                 return next(err);

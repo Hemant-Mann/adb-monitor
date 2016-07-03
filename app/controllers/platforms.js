@@ -143,6 +143,9 @@ var Platforms = (function () {
      * to the request object acting as a middleware for the all the routes with param :id
      */
     p._find = function (req, res, next) {
+        if (!req.user) {
+            return res.redirect('/auth/login');
+        }
         Code.findOne({ _id: Utils.parseParam(req.params.id), uid: req.user._id }, function (err, code) {
             if (err || !code) {
                 var err = new Error("Platform not found");
