@@ -4,6 +4,10 @@ var router = express.Router();
 var Utils = require('../scripts/util');
 var Auth = require('../controllers/auth');
 
+router.get('/verify/:id', function (req, res, next) {
+	Auth._init(req, res, next, {method: 'verify'});
+});
+
 // Capture  request
 var regex = Utils.urlRegex(Auth);
 router.get(regex, function (req, res, next) {

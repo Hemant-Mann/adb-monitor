@@ -5,7 +5,6 @@ var Schema = mongoose.Schema;
 var statSchema = new Schema({
     cid: {
     	type: Schema.Types.ObjectId,
-    	index: true,
     	required: true
     },
     block: {
@@ -18,17 +17,14 @@ var statSchema = new Schema({
     },
     browser: {
     	type: String,
-    	index: true,
     	required: true
     },
     device: {
         type: String,
-        index: true,
         required: true
     },
     created: {
         type: Date,
-        index: true,
         default: Date.now
     },
     modified: {

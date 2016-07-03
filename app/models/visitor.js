@@ -5,17 +5,14 @@ var Schema = mongoose.Schema;
 var visitSchema = new Schema({
     cid: {
         type: Schema.Types.ObjectId,
-        index: true,
         required: true
     },
     cookie: {
-        type: String,
-        index: true
+        type: String
     },
     total: Number,
     created: {
         type: Date,
-        index: true,
         default: Date.now
     },
     modified: Date

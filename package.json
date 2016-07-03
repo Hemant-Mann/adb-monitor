@@ -16,6 +16,7 @@
     "express-session": "^1.13.0",
     "gemoji": "^1.0.0",
     "geoip-lite": "^1.1.7",
+    "mailgun-js": "^0.7.11",
     "mongoose": "^4.4.11",
     "morgan": "~1.6.1",
     "passport": "^0.2.2",
