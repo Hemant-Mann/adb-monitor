@@ -15,8 +15,9 @@ var Auth = (function () {
     controller.prototype = new Shared;
     
     var a = new controller();
+    a.defaultLayout = "layouts/client";
     a.register = function (req, res, cb) {
-        this.view.message = null;
+        this.view.message = null; this.view.user = null;
         if (req.method === 'POST') {
             if (req.body.password !== req.body.repeatPass) {
                 return cb(new Error("Password's Don't Match"));
@@ -40,7 +41,7 @@ var Auth = (function () {
     };
     
     a.login = function (req, res, cb) {
-        this.view.message = null;
+        this.view.message = null; this.view.user = null;
         var self = this;
 
         if (req.method === 'POST') {
@@ -58,7 +59,7 @@ var Auth = (function () {
                 req.login(user, function(err) {
                     if (err) return cb(err);
 
-                    var url = '/platforms';
+                    var url = '/platforms/index.html';
                     if (req.session.previousPath) {
                         url = req.session.previousPath
                         delete req.session.previousPath;

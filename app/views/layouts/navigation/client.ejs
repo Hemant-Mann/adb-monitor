@@ -1,15 +1,17 @@
 <!-- Navigation Bar-->
 <header id="topnav">
-    <div class="topbar-main">
+    <div class="topbar-main" style="height: 60px;">
         <div class="container">
 
             <!-- Logo container-->
             <div class="logo">
-                <a href="index.html" class="logo"><i class="md md-equalizer"></i> <span>MonitorADBlock</span> </a>
+                <a href="/" class="logo"><i class="md md-equalizer"></i> <span>MonitorADBlock</span> </a>
             </div>
             <!-- End Logo container-->
-
+            
+            
             <div class="menu-extras">
+                <% if (user) { %>
                 <ul class="nav navbar-nav navbar-right pull-right">
                     <li class="dropdown">
                         <a href="index.html" class="dropdown-toggle waves-effect waves-light profile" data-toggle="dropdown" aria-expanded="true"><img src="/assets/images/users/avatar-1.jpg" alt="user-img" class="img-circle"> <%= user.name %> </a>
@@ -20,6 +22,7 @@
                         </ul>
                     </li>
                 </ul>
+                <% } %>
 
                 <div class="menu-item">
                     <!-- Mobile menu toggle-->
@@ -38,16 +41,17 @@
     </div>
     <!-- End topbar -->
 
-
     <!-- Navbar Start -->
     <div class="navbar-custom">
         <div class="container">
             <div id="navigation">
                 <ul class="navigation-menu">
+                    <% if (user) { %>
                     <li class="has-submenu active">
-                        <a href="index.html"><i class="md md-dashboard"></i>Dashboard</a>
+                        <a href="/platforms/index.html"><i class="md md-dashboard"></i>Dashboard</a>
                     </li>
-
+                    <% } else { %>
+                    <% } %>
                 </ul>
             </div>
         </div>
