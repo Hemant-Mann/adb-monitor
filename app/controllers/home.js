@@ -1,4 +1,5 @@
 var Shared = require('./controller');
+var email = require('../config/mail').fromEmail;
 
 /**
  * Home Controller
@@ -11,7 +12,7 @@ var Home = (function () {
 
     var h = new controller();
     h.index = function (req, res, cb) {
-        this.view.data = "This is the data set by controller in view";
+        this.view.email = email;
         cb(null);   // pass control to the calling function
     };
     

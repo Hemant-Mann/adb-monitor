@@ -9,6 +9,13 @@ var passport = require('passport');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 
+var app = express();
+
+// view engine setup
+app.set('views', path.join(__dirname, '/app/views'));
+app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, 'public')));
+
 var routes = require('./app/routes/index'),
   mongoose = require('mongoose'),
   config = require('./config'),
@@ -18,13 +25,6 @@ var routes = require('./app/routes/index'),
 var authRoutes = require('./app/routes/auth'),
   adminRoutes = require('./app/routes/admin'),
   platformRoutes = require('./app/routes/platforms');
-
-var app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, '/app/views'));
-app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, 'public')));
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

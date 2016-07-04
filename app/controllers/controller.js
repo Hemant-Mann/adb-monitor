@@ -1,19 +1,12 @@
 var Utils = require('../scripts/util');
 var urlParser = require('url');
+var seo = require('../config/seo');
 
 /**
  * Shared Controller
  */
 var Controller = (function () {
     'use strict';
-
-    var seo = {
-        title: 'Express MVC',
-        description: 'This is a MVC framework built on top of Express',
-        keywords: 'mvc, framework, mvc framework, express, node js framework, node js, javascript',
-        photo: null, // path to logo,
-        author: 'Hemant Mann'
-    };
 
     function Controller() {
         this.seo = seo;

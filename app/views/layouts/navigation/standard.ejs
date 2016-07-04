@@ -1,13 +1,72 @@
-<header>
-	<nav class="navbar navbar-default">
-		<div class="container">
-			<div class="navbar-header">
-				<a href="/" class="navbar-brand">Monitor ADBlock</a>
-			</div>
-
-			<ull class="nav navbar-nav navbar-right">
-				<li><a href="#"><i class="fa fa-home"></i> Home</a></li>
-			</ull>
-		</div>
-	</nav>
-</header>
+<div class="tagline hidden-xs">
+    <div class="container">
+        <div class="pull-left">
+            <div class="phone">
+                <i class=" ti-mobile"></i> +1 91-9xxxx
+            </div>
+            <div class="email">
+                <a href="mailto:#">
+                    <i class=" ti-email"></i> <%= email %>
+                </a>
+            </div>
+        </div>
+        <div class="pull-right">
+            <ul class="top_socials">
+                <li>
+                    <a href="javascript:void(0);"><i class=" ti-facebook"></i></a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);"><i class=" ti-skype"></i></a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);"><i class=" ti-twitter-alt"></i></a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);"><i class=" ti-github"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+<div class="navbar navbar-custom sticky" role="navigation">
+    <div class="container">
+        <!-- Navbar-header -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <i class=" ti-menu"></i>
+            </button>
+            <!-- LOGO -->
+            <a class="navbar-brand logo" href="index.html">
+                <i class="glyphicon glyphicon-stats"></i>
+                <span><%= seo.platform %></span>
+            </a>
+        </div>
+        <!-- end navbar-header -->
+        <!-- menu -->
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="index.html#how-it-work">How it work</a>
+                </li>
+                <li>
+                    <a href="index.html#features">Features</a>
+                </li>
+                <li>
+                    <a href="index.html#pricing">Pricing</a>
+                </li>
+                <li>
+                    <a href="index.html#faq">FAQ</a>
+                </li>
+                <li>
+                    <a href="/auth/login.html">Login</a>
+                </li>
+                <li>
+                    <a href="/auth/register.html">Sign Up</a>
+                </li>
+            </ul>
+        </div>
+        <!--/Menu -->
+    </div>
+    <!-- end container -->
+</div>
