@@ -13,7 +13,7 @@ module.exports = function () {
     var db = mongoose.connect(dbURI);
 
     require(folder + 'stat');
-    require(folder + 'code');
+    require(folder + 'platform');
     require(folder + 'visitor');
     require(folder + 'user');
     return db;

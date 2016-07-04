@@ -1,7 +1,7 @@
 // models
 var folder = '../models/';
 var Stat = require(folder + 'stat');
-    Code = require(folder + 'code'),
+    Platform = require(folder + 'platform'),
     Visitor = require(folder + 'visitor'),
     User = require(folder + 'user');
 
@@ -28,18 +28,18 @@ var Tracking = {
         // If No referer then return Or Referer doesn't contain the host
         if (!referer || !referer.match(hostRegex)) return cb(false);
 
-        // find the code for the ID sent to the server
-        Code.findOne({ _id: opts.cid, live: true }, function (err, code) {
-            if (err || !code) return cb(false);
+        // find the platform for the ID sent to the server
+        Platform.findOne({ _id: opts.pid, live: true }, function (err, platform) {
+            if (err || !platform) return cb(false);
 
-            // Check if the code is executing on the provided domain
-            if (code.domain !== host) return cb(false);
+            // Check if the platform is executing on the provided domain
+            if (platform.domain !== host) return cb(false);
 
             // Now check device
-            User.findOne({ _id: code.uid, live: true }, function (err, user) {
+            User.findOne({ _id: platform.uid, live: true }, function (err, user) {
                 if (!user) return cb(false);
 
-                cb(true, { cid: code._id });
+                cb(true, { pid: platform._id });
             });
         });
     },
@@ -62,20 +62,20 @@ var Tracking = {
             device = 'mobile';
         }
         // Check Visitor
-        Visitor.process({ cookie: params.ckid, cid: opts.cid }, function (err) {
+        Visitor.process({ cookie: params.ckid, pid: opts.pid }, function (err) {
             if (err) return false;
 
-            var query = { cid: opts.cid, browser: browser, device: device };
+            var query = { pid: opts.pid, browser: browser, device: device };
             var options = Utils.copyObj(query);
 
             options.block = Number(params.b);
             Stat.process(query, options);   // Process that stats
         });
     },
-    display: function (cid, created, cb) {
+    display: function (pid, created, cb) {
         var s = {}, total = { allowing: 0, blocking: 0, visitors: 0, pageviews: 0 };
         Stat.find({
-            cid: cid,
+            pid: pid,
             created: created
         }, function (err, stats) {
             if (err) return cb(500);
@@ -98,7 +98,7 @@ var Tracking = {
 
                 total.pageviews += total.allowing + total.blocking;
             });
-            Visitor.find({ cid: cid, created: created }, function (err, v) {
+            Visitor.find({ pid: pid, created: created }, function (err, v) {
                 if (err) return cb(Utils.commonMsg(500));
                 var unique = {}, prop;
 

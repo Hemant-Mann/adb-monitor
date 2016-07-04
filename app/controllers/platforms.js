@@ -1,5 +1,5 @@
 var Shared = require('./controller');
-var Code = require('../models/code');
+var Platform = require('../models/platform');
 var Utils = require('../scripts/util');
 var Stat = require('../models/stat');
 var Visitor = require('../models/visitor');
@@ -29,7 +29,7 @@ var Platforms = (function () {
         self.view.message = null;
         self.view.platforms = [];
 
-        Code.find({uid: req.user._id}, function (err, codes) {
+        Platform.find({uid: req.user._id}, function (err, codes) {
             if (err) return cb(Utils.commonMsg(500));
 
             if (codes.length === 0) {
@@ -83,7 +83,7 @@ var Platforms = (function () {
         this._jsonView();
 
         var c = req.platform;
-        Stat.find({ cid: c._id }, function (err, stats) {
+        Stat.find({ pid: c._id }, function (err, stats) {
             if (err) return cb(Utils.commonMsg(500));
 
             if (stats.length > 0) {
@@ -107,11 +107,11 @@ var Platforms = (function () {
         this.view.message = null;
 
         if (req.method === 'POST') {
-            var platform = new Code(req.body);
+            var platform = new Platform(req.body);
             platform.uid = req.user._id;
             platform.live = true;
 
-            Code.findOne({ uid: platform.uid, domain: platform.domain }, function (err, c) {
+            Platform.findOne({ uid: platform.uid, domain: Platform.parseDomain(platform.domain) }, function (err, c) {
                 if (err) return cb(Utils.commonMsg(500));
 
                 if (c) return cb({ message: "Platform already exists!!" });
@@ -146,14 +146,14 @@ var Platforms = (function () {
         if (!req.user) {
             return res.redirect('/auth/login');
         }
-        Code.findOne({ _id: Utils.parseParam(req.params.id), uid: req.user._id }, function (err, code) {
-            if (err || !code) {
+        Platform.findOne({ _id: Utils.parseParam(req.params.id), uid: req.user._id }, function (err, platform) {
+            if (err || !platform) {
                 var err = new Error("Platform not found");
                 err.type = "json"; err.status = 400;
                 return next(err);
             }
 
-            req.platform = code;
+            req.platform = platform;
             next();
         });
     };

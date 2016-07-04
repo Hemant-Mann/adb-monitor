@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 // create a schema
 var statSchema = new Schema({
-    cid: {
+    pid: {
     	type: Schema.Types.ObjectId,
     	required: true
     },
@@ -32,10 +32,10 @@ var statSchema = new Schema({
     }
 }, { collection: 'statistics' });
 
-statSchema.index({ cid: 1, browser: 1, device: 1, created: 1 });
-statSchema.index({ cid: 1, created: 1 });
-statSchema.index({ cid: 1, created: 1, browser: 1 });
-statSchema.index({ cid: 1, created: 1, device: 1 });
+statSchema.index({ pid: 1, browser: 1, device: 1, created: 1 });
+statSchema.index({ pid: 1, created: 1 });
+statSchema.index({ pid: 1, created: 1, browser: 1 });
+statSchema.index({ pid: 1, created: 1, device: 1 });
 
 statSchema.statics.process = function (query, opts) {
     var self = this;
