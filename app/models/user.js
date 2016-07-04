@@ -33,10 +33,7 @@ var UserSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    admin: {
-        type: Boolean,
-        default: false
-    },
+    admin: Boolean,
     live: {
         type: Boolean,
         default: false
@@ -57,19 +54,14 @@ UserSchema.methods.hashPassword = function (password) {
 // pre + post middleware of Mongoose schema
 UserSchema.pre('save', function (next) {
     var self = this;
-    
-    mongoose.model('User').findOne({email: self.email.toLowerCase()}, function(err, user) {
-        if (err) return next(new Error("Internal Server Error"));
-        if (user && user._id != self._id) return next(new Error("Email already exists"));
 
-        if (self.password) {
-            self.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
-            self.password = self.hashPassword(self.password);
-        } else {
-            next(new Error("Password is required"));
-        }
+    if (self.password) {
+        self.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
+        self.password = self.hashPassword(self.password);
         next();
-    });
+    } else {
+        next(new Error("Password is required"));
+    }
 });
 
 var User = mongoose.model('User', UserSchema);

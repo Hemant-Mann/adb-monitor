@@ -23,11 +23,13 @@
 	                            <div class="form-group">
 	                                <label>Email</label>
 	                                <input class="form-control" name="email" required="true" type="email" placeholder="Enter your email">
+	                                <span class="help-block text-danger"><% if (errors.email) { %><%= errors.email.message %><% } %></span>
 	                            </div>
 
 	                            <div class="form-group">
 	                                <label>Passowrd</label>
 	                                <input class="form-control" name="password" required="true" type="password" placeholder="Enter your password">
+	                                <span class="help-block text-danger"><% if (errors.password) { %><%= errors.password.message %><% } %></span>
 	                            </div>
 
 	                            <div class="form-group">

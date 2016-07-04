@@ -4,7 +4,6 @@ var Meta = require('../models/meta');
 
 var passport = require('passport');
 var Utils = require('../scripts/util');
-var Mail = require('../scripts/mail');
 var AuthService = require('../services/auth');
 
 /**
@@ -38,21 +37,20 @@ var Auth = (function () {
 
     a.register = function (req, res, cb) {
         this.view.message = null; this.view.user = null;
-        
+        this.view.errors = {}; var self = this;
+
         if (req.method === 'POST') {
             if (req.body.password !== req.body.repeatPass) {
                 return cb({message: "Password's Don't Match"});
             }
             var user = new User(req.body);
 
-            user.save(function (err) {
-                if (err) {
-                    return cb({message: err.message});
+            AuthService.register(user, function (err) {
+                if (err.errors) {
+                    self.view.errors = err.errors;
                 }
-
-                AuthService.register(user, cb);
+                return cb({message: err.message});
             });
-            return;
         } else {
             cb();
         }
@@ -107,12 +105,9 @@ var Auth = (function () {
                 return cb(err);
             }
 
-            User.findOne({ _id: meta.pid }, function (err, user) {
-                if (err || !user) return false;
+            User.update({ _id: meta.pid }, {$set: { live: true} } , function (err) {
+                if (err) return false;
 
-                user.live = 1;
-                user.save();
-                meta.remove();
                 return cb(Utils.commonMsg(200, "Account verified"));
             });
         });

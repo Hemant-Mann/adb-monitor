@@ -18,10 +18,10 @@ var Mail = {
 
 			opts.html = html;
 			mailgun.messages().send(opts, function (error, body) {
-		        if (err) {
-		        	cb(Utils.commonMsg(500));
+		        if (error) {
+		        	return cb(Utils.commonMsg(500));
 		        }
-		        return cb(Utils.commonMsg(200, "User registered"));    
+		        cb(false, Utils.commonMsg(200, "User registered"));    // only here process completes
 		    });
 		});
 	},
