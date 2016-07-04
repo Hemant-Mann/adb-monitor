@@ -36,7 +36,7 @@ var Auth = (function () {
     };
 
     a.register = function (req, res, cb) {
-        this.view.message = null; this.view.user = null;
+        this.view.message = null;
         this.view.errors = {}; var self = this;
 
         if (req.method === 'POST') {
@@ -57,7 +57,7 @@ var Auth = (function () {
     };
     
     a.login = function (req, res, cb) {
-        this.view.message = null; this.view.user = null;
+        this.view.message = null;
         var self = this;
 
         if (req.method === 'POST') {
@@ -92,12 +92,11 @@ var Auth = (function () {
     };
 
     a.forgotPassword = function (req, res, cb) {
-        this.view.message = null; this.view.user = null;
+        this.view.message = null;
         cb(null);
     };
 
     a.verify = function (req, res, cb) {
-        this.view.user = null;
         Meta.findOne({ prop: 'user', val: Utils.parseParam(req.params.id) }, function (err, meta) {
             if (err || !meta) {
                 var err = new Error((Utils.commonMsg(400)).message);
@@ -105,7 +104,7 @@ var Auth = (function () {
                 return cb(err);
             }
 
-            User.update({ _id: meta.pid }, {$set: { live: true} } , function (err) {
+            User.update({ _id: meta.pid }, {$set: {live: true}} , function (err) {
                 if (err) return false;
 
                 return cb(Utils.commonMsg(200, "Account verified"));

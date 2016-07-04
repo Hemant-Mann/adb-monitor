@@ -42,8 +42,10 @@ var Controller = (function () {
 
             if (self.secure.length > 0 && self.secure.indexOf(self.method) !== -1) {
                 if (!self._secure(req, res)) {
-                    return res.redirect('/auth/login');
+                    return res.redirect('/auth/login.html');
                 }
+            } else {
+                self.view.user = null;
             }
             
             self[method](req, res, function (err, success) {
