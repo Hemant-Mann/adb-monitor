@@ -10,7 +10,7 @@ router.get('/verify/:id', function (req, res, next) {
 
 // Capture  request
 var regex = Utils.urlRegex(Auth);
-router.get(regex, function (req, res, next) {
+router.get(regex, Auth._session, function (req, res, next) {
 	Auth._init(req, res, next)
 });
 

@@ -57,9 +57,10 @@ UserSchema.methods.hashPassword = function (password) {
 // pre + post middleware of Mongoose schema
 UserSchema.pre('save', function (next) {
     var self = this;
+    
     mongoose.model('User').findOne({email: self.email.toLowerCase()}, function(err, user) {
         if (err) return next(new Error("Internal Server Error"));
-        if (user) return next(new Error("Email already exists"));
+        if (user && user._id != self._id) return next(new Error("Email already exists"));
 
         if (self.password) {
             self.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
