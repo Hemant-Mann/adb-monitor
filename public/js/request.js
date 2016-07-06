@@ -6,21 +6,18 @@
  */
 (function (window, $) {
     var Request = (function () {
-        
-        $.ajaxSetup({});
-
         function Request() {
             this.api = window.location.origin + '/'; // Api EndPoint
             this.extension = '.json';
-            
+
             this.entityMap = {
-               "&": "&amp;",
-               "<": "&lt;",
-               ">": "&gt;",
-               '"': '&quot;',
-               "'": '&#39;',
-               "/": '&#x2F;'
-             };
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': '&quot;',
+                "'": '&#39;',
+                "/": '&#x2F;'
+            };
 
             this.escapeHtml = function escapeHtml(string) {
                 var self = this;
@@ -31,46 +28,14 @@
         }
 
         Request.prototype = {
-            post: function (opts, callback) {
-                var self = this,
-                    link = this.api + this._clean(opts.url) + this.extension;
-                $.ajax({
-                    url: link,
-                    type: 'POST',
-                    data: opts.data || {},
-                }).done(function (data) {
-                    callback.call(self, null, data);
-                }).fail(function () {
-                    callback.call(self, "error", {});
-                });
-            },
             get: function (opts, callback) {
-                var self = this,
-                    link = this.api + this._clean(opts.url) + this.extension;
-                $.ajax({
-                    url: link,
-                    type: 'GET',
-                    data: opts.data || {},
-                }).done(function (data) {
-                    callback.call(self, null, data);
-                }).fail(function () {
-                    callback.call(self, "error", {});
-                });
+                this._request(opts, 'GET', callback);
+            },
+            post: function (opts, callback) {
+                this._request(opts, 'POST', callback);
             },
             delete: function (opts, callback) {
-                var self = this,
-                    link = this.api + this._clean(opts.url) + this.extension;
-
-                $.ajax({
-                   url: link,
-                   type: 'DELETE',
-                   data: opts.data || {}
-               })
-               .done(function (data) {
-                   callback.call(self, null, data);
-               }).fail(function () {
-                   callback.call(self, "error", {});
-               });
+                this._request(opts, 'DELETE', callback);
             },
             _clean: function (entity) {
                 if (!entity || entity.length === 0) {
@@ -78,9 +43,23 @@
                 }
                 return entity.replace(/\./g, '');
             },
+            _request: function (opts, type, callback) {
+                var link = this.api + this._clean(opts.url) + this.extension,
+                    self = this;
+
+                $.ajax({
+                    url: link,
+                    type: type,
+                    data: opts.data || {},
+                }).done(function (data) {
+                    callback.call(self, null, data);
+                }).fail(function (err) {
+                    callback.call(self, err || "error", {});
+                });
+            }
         };
         return Request;
     }());
-    // Because window.Request is already taken
+    // Because "window.Request" is already taken
     window.request = new Request();
 }(window, jQuery));

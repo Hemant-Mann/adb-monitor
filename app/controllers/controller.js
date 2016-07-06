@@ -18,6 +18,10 @@ var Controller = (function () {
         this.method = ''; // will store the method which has been called
         this.view = {}; // Properties set on this object can be accessed in views
         this.secure = [];   // Array to hold which functions needs authorization before executing
+
+        this._initView = function () {
+            this.view = {};
+        };
     }
 
     /**
@@ -31,7 +35,7 @@ var Controller = (function () {
             var self = this,
                 method = opts.method || (req.params[0]);
 
-            self.view = {};
+            self._initView();
 
             if (!method) {
                 var err = new Error("Invalid URL"); err.status = 400;

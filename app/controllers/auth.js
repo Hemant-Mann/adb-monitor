@@ -35,8 +35,11 @@ var Auth = (function () {
         next();
     };
 
-    a.register = function (req, res, cb) {
+    a._initView = function () {
         this.view.message = null;
+    };
+
+    a.register = function (req, res, cb) {
         this.view.errors = {}; var self = this;
 
         if (req.method === 'POST') {
@@ -57,7 +60,6 @@ var Auth = (function () {
     };
     
     a.login = function (req, res, cb) {
-        this.view.message = null;
         var self = this;
 
         if (req.method === 'POST') {
@@ -92,7 +94,6 @@ var Auth = (function () {
     };
 
     a.forgotPassword = function (req, res, cb) {
-        this.view.message = null;
         cb(null);
     };
 

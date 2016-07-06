@@ -11,14 +11,20 @@ var Home = (function () {
     controller.prototype = new Shared;
 
     var h = new controller();
-    h.index = function (req, res, cb) {
+    /**
+     * Override parent method, set variables which are common
+     * to all the views
+     */
+    h._initView = function () {
         this.view.email = email;
+    };
+    
+    h.index = function (req, res, cb) {
         cb(null);   // pass control to the calling function
     };
     
     h.support = function (req, res, cb) {
-        this._noview();
-        res.send('support function');
+        cb(null);
     };
     
     h.contact = function (req, res, cb) {
