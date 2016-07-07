@@ -86,13 +86,19 @@ $(document).ready(function() {
         var end = new Date(); end.setMonth(end.getMonth() + 1);
 
         var pid = window.location.pathname.match(/\/platforms\/(\w+)/)[1];
+        var device = window.location.search.match(/device=(.*)/i);
 
+        var data = {
+            start: today(start),
+            end: today(end)
+        };
+        if (device && device[1]) {
+            device = device[1];
+            data.device = device;
+        }
         request.get({
             url: 'platforms/' + pid,
-            data: {
-                start: today(start),
-                end: today(end)
-            }
+            data: data
         }, function (err, d) {
             if (err) return false;
 

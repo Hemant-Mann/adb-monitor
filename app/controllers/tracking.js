@@ -67,7 +67,7 @@ var Tracking = {
             device = 'mobile';
         }
         // Check Visitor
-        Visitor.process({ cookie: params.ckid, pid: opts.pid }, function (err) {
+        Visitor.process({ cookie: params.ckid, pid: opts.pid, device: device }, function (err) {
             if (err) return false;
 
             var query = { pid: opts.pid, browser: browser, device: device };
@@ -77,12 +77,17 @@ var Tracking = {
             Stat.process(query, options);   // Process that stats
         });
     },
-    display: function (pid, created, cb) {
+    display: function (pid, created, device, cb) {
         var s = {}, total = { allowing: 0, blocking: 0, visitors: 0, pageviews: 0 };
-        Stat.find({
+
+        var query = {
             pid: pid,
             created: created
-        }, function (err, stats) {
+        };
+        if (device) {
+            query.device = device.toLowerCase();
+        }
+        Stat.find(query, function (err, stats) {
             if (err) return cb(500);
             
             if (!stats || stats.length === 0) {
@@ -109,7 +114,12 @@ var Tracking = {
 
                 total.pageviews += record.allow + record.block;
             });
-            Visitor.find({ pid: pid, created: created }, function (err, v) {
+            if (query.device) {
+                query = { pid: pid, created: created, device: device.toLowerCase() };
+            } else {
+                query = { pid: pid, created: created };
+            }
+            Visitor.find(query, function (err, v) {
                 if (err) return cb(Utils.commonMsg(500));
                 var unique = {}, prop;
 

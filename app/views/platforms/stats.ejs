@@ -1,9 +1,9 @@
 <div class="row">
     <div class="col-sm-6">
-        <button type="button" class="btn btn-teal bold">All</button>
-        <button type="button" class="btn btn-default bold"><i class="fa fa-desktop"></i>&nbsp; Desktop</button>
-        <button type="button" class="btn btn-default bold"><i class="fa fa-tablet"></i>&nbsp; Tablet</button>
-        <button type="button" class="btn btn-default bold"><i class="fa fa-mobile"></i>&nbsp; Mobile</button>
+        <a href="/platforms/<%= platform._id %>.html" class="btn btn-teal bold">All</a>
+        <a href="/platforms/<%= platform._id %>.html?device=desktop" class="btn btn-default bold"><i class="fa fa-desktop"></i>&nbsp; Desktop</a>
+        <a href="/platforms/<%= platform._id %>?device=tablet" class="btn btn-default bold"><i class="fa fa-tablet"></i>&nbsp; Tablet</a>
+        <a href="/platforms/<%= platform._id %>?device=mobile" class="btn btn-default bold"><i class="fa fa-mobile"></i>&nbsp; Mobile</a>
     </div>
     <div class="col-sm-6">
         <div class="text-right-responsive">

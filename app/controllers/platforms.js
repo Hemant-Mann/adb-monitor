@@ -49,12 +49,15 @@ var Platforms = (function () {
             dateQuery = Utils.dateQuery(req.query),
             start = dateQuery.start,
             end = dateQuery.end,
-            created = { $gte: start, $lte: end };
+            created = { $gte: start, $lte: end },
+            device = req.query.device || '';
+
+        self.view.device = device;
 
         self.view.platform = req.platform;
         self.view.today = Utils.today;
 
-        Tracking.display(req.platform._id, created, function (err, result) {
+        Tracking.display(req.platform._id, created, device, function (err, result) {
             self.view.stats = result.stats;
             self.view.total = result.total;
 

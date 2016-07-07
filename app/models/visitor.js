@@ -7,10 +7,14 @@ var visitSchema = new Schema({
         type: Schema.Types.ObjectId,
         required: true
     },
+    device: String,
     cookie: {
         type: String
     },
-    total: Number,
+    total: {
+        type: Number,
+        default: 0
+    },
     created: {
         type: Date,
         default: Date.now
@@ -18,7 +22,8 @@ var visitSchema = new Schema({
     modified: Date
 }, { collection: 'visitors' });
 
-visitSchema.index({ pid: 1, cookie: 1, created: 1 });
+visitSchema.index({ pid: 1, cookie: 1, created: 1, device: 1 });
+visitSchema.index({ pid: 1, created: 1, device: 1 });
 visitSchema.index({ pid: 1, created: 1 });
 
 visitSchema.statics.process = function (opts, cb) {
@@ -26,19 +31,13 @@ visitSchema.statics.process = function (opts, cb) {
     var start = new Date(); start.setHours(0, 0, 0, 0);
     var end = new Date(); end.setHours(23, 59, 59, 999);
 
-	self.findOne({
-        pid: opts.pid,
-        cookie: opts.cookie,
-        created: { $gte: start, $lte: end }
-    }, function (err, visitor) {
+    opts.created = { $gte: start, $lte: end };
+	self.findOne(opts, function (err, visitor) {
 		if (err) return cb(true);
 
 		if (!visitor) {
-			visitor = new self({
-				pid: opts.pid,
-				cookie: opts.cookie,
-                total: 0
-			});
+			visitor = new self(opts);
+            visitor.total = 0;
 		}
 
         visitor.total += 1;
