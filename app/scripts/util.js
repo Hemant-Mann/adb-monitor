@@ -119,11 +119,7 @@ var utils = {
     dateQuery: function (obj) {
         var start, end, tmp;
 
-        start = new Date();
-        start.setHours(0, 0, 0, 0);
-
-        end = new Date();
-        end.setHours(23, 59, 59, 999);
+        start = new Date(); end = new Date();
 
         if (obj.start) {
             tmp = new Date(obj.start);
@@ -132,6 +128,7 @@ var utils = {
                 start = tmp;
             }
         }
+        start.setHours(0, 0, 0, 0);
 
         if (obj.end) {
             tmp = new Date(obj.end);
@@ -140,6 +137,7 @@ var utils = {
                 end = tmp;
             }
         }
+        end.setHours(23, 59, 59, 999);
 
         return {
             start: start,

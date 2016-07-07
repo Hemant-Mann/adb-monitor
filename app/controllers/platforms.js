@@ -52,6 +52,7 @@ var Platforms = (function () {
             created = { $gte: start, $lte: end };
 
         self.view.platform = req.platform;
+        self.view.today = Utils.today;
 
         Tracking.display(req.platform._id, created, function (err, result) {
             self.view.stats = result.stats;

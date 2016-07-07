@@ -63,6 +63,24 @@ $(document).ready(function() {
         });
     });
 
+    $('#dateRangeStats').on('submit', function (e) {
+        /*e.preventDefault();
+
+        var url = window.location.pathname,
+            self = $(this);
+        url = url.substr(1); url = url.replace(/\.html/g, '');
+        var opts = {
+            url: url,
+            data: {
+                start: self.find('select').val(),
+                end: today()
+            }
+        };
+        request._request(opts, self.attr('action') || 'GET', function (err, d) {
+            console.log(d);
+        });*/
+    });
+
     if ($('#morris-area-chart').length > 0) {
         var start = new Date(); start.setMonth(start.getMonth() - 1);
         var end = new Date(); end.setMonth(end.getMonth() + 1);
@@ -78,31 +96,7 @@ $(document).ready(function() {
         }, function (err, d) {
             if (err) return false;
 
-            var data = [], prop;
-            for (prop in d.stats) {
-                console.log(prop);
-                data.push({
-                    y: prop,
-                    a: d.stats[prop].allowing,
-                    b: d.stats[prop].blocking
-                });
-            }
-
-            Morris.Area({
-                element: 'morris-area-chart',
-                data: data,
-                xkey: 'y',
-                ykeys: ['a', 'b'],
-                labels: ['Allowing', 'Blocking'],
-                pointSize: 3,
-                lineWidth: 1,
-                hideHover: 'auto',
-                resize: true,
-                gridLineColor: '#eef0f2',
-                pointFillColors: ['#ffffff'],
-                pointStrokeColors: ['#999999'],
-                lineColors: ["#00b19d", "#3bafda"]
-            });
+            drawGraph(d);
         });
     }
 
@@ -122,4 +116,31 @@ $(document).ready(function() {
         return today;
     }
 });
+
+function drawGraph(d) {
+    var data = [], prop;
+    for (prop in d.stats) {
+        data.push({
+            y: prop,
+            a: d.stats[prop].allowing,
+            b: d.stats[prop].blocking
+        });
+    }
+
+    Morris.Area({
+        element: 'morris-area-chart',
+        data: data,
+        xkey: 'y',
+        ykeys: ['a', 'b'],
+        labels: ['Allowing', 'Blocking'],
+        pointSize: 3,
+        lineWidth: 1,
+        hideHover: 'auto',
+        resize: true,
+        gridLineColor: '#eef0f2',
+        pointFillColors: ['#ffffff'],
+        pointStrokeColors: ['#999999'],
+        lineColors: ["#00b19d", "#3bafda"]
+    });
+}
 

@@ -7,14 +7,26 @@
     </div>
     <div class="col-sm-6">
         <div class="text-right-responsive">
-            <select class="form-control">
-                <option>Today</option>
-                <option>Yesterday</option>
-                <option>Last 7 Days</option>
-                <option selected="">Last 30 Days</option>
-                <option>Last 60 Days</option>
-                <option>Last 90 Days</option>
-            </select>
+            <form action="" id="dateRangeStats" method="GET">
+                <select class="form-control" name="start">
+                    <% var d = new Date(); %>
+                    <option value="<%- today(d) %>">Today</option>
+                    <% d.setDate(d.getDate() - 1) %>
+                    <option value="<%- today(d) %>">Yesterday</option>
+                    <% d.setDate(d.getDate() - 6) %>
+                    <option value="<%- today(d) %>">Last 7 Days</option>
+
+                    <% d = new Date(); d.setMonth((new Date()).getMonth() - 1) %>
+                    <option value="<%- today(d) %>" selected="">Last 30 Days</option>
+                    <% d = new Date(); d.setMonth((new Date()).getMonth() - 2) %>
+                    <option value="<%- today(d) %>">Last 60 Days</option>
+                    <% d = new Date(); d.setMonth((new Date()).getMonth() - 3) %>
+                    <option value="<%- today(d) %>">Last 90 Days</option>
+                </select>
+                <% d = new Date(); d.setHours(23, 59, 59, 1000); %>
+                <input type="hidden" name="end" value="<%= today(d) %>">
+                <button type="submit" class="btn btn-xs btn-primary pull-right">Go</button>
+            </form>
         </div>
     </div>
 </div>
@@ -56,10 +68,10 @@
                         <tbody>
                             <tr>
                                 <td><%= total.visitors %></td>
-                                <td><%= total.allowing %></td>
-                                <td><%= total.blocking %></td>
+                                <td class="text-success"><%= Number((total.allowing / total.pageviews) * 100).toFixed(2) %> %</td>
+                                <td class="text-danger"><%= Number((total.blocking / total.pageviews) * 100).toFixed(2) %> %</td>
                                 <td><%= total.pageviews %></td>
-                                <td><%= total.pageviews / total.visitors %></td>
+                                <td><%- (Number(total.pageviews / total.visitors).toFixed(3)) %></td>
                             </tr>
                         </tbody>
                     </table>

@@ -50,6 +50,9 @@ var Tracking = {
 
             return isMobile;
     },
+    _isTablet: function (ua) {
+        return Boolean(ua.match(/(iPad|SCH-I800|xoom|kindle)/i));
+    },
     process: function (req, opts) {
     	var params = req.query,
             parser = new UAParser(),
@@ -58,7 +61,9 @@ var Tracking = {
             browser = uaResult.browser.name,
             device = 'desktop';
 
-        if (this._isMobile(ua)) {
+        if (this._isTablet(ua)) {
+            device = 'tablet';
+        } else if (this._isMobile(ua)) {
             device = 'mobile';
         }
         // Check Visitor
@@ -88,15 +93,21 @@ var Tracking = {
             }
 
             stats.forEach(function (record) {
-                s[Utils.today(record.created)] = {
-                    blocking: record.block,
-                    allowing: record.allow,
-                };
+                var key = Utils.today(record.created);
+                if (typeof s[key] !== "undefined") {
+                    s[key].blocking += record.block;
+                    s[key].allowing += record.allow;
+                } else {
+                    s[key] = {
+                        blocking: record.block,
+                        allowing: record.allow,
+                    };
+                }
 
                 total.allowing += record.allow;
                 total.blocking += record.block;
 
-                total.pageviews += total.allowing + total.blocking;
+                total.pageviews += record.allow + record.block;
             });
             Visitor.find({ pid: pid, created: created }, function (err, v) {
                 if (err) return cb(Utils.commonMsg(500));
