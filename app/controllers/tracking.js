@@ -35,7 +35,7 @@ var Tracking = {
             // Check if the platform is executing on the provided domain
             if (platform.domain !== host) return cb(false);
 
-            // Now check device
+            // Check if user account is not blocked
             User.findOne({ _id: platform.uid, live: true }, function (err, user) {
                 if (!user) return cb(false);
 

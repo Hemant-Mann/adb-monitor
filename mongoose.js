@@ -1,7 +1,6 @@
 var mongoose = require('mongoose');
 var config = require('./config');
 
-// mongoose.connect('mongodb://' + config.user + ':' + config.pass + config.dburl + '/' + config.db);
 module.exports = function () {
     var folder = './app/models/', dbURI;
 

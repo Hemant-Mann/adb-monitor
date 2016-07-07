@@ -32,6 +32,7 @@ var statSchema = new Schema({
     }
 }, { collection: 'statistics' });
 
+statSchema.index({ pid: 1 });
 statSchema.index({ pid: 1, browser: 1, device: 1, created: 1 });
 statSchema.index({ pid: 1, created: 1 });
 statSchema.index({ pid: 1, created: 1, browser: 1 });

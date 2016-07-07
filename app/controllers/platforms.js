@@ -25,19 +25,40 @@ var Platforms = (function () {
      */
     p.index = function (req, res, cb) {
         var self = this;
-        self.view.user = req.user;
         self.view.message = null;
-        self.view.platforms = [];
+        self.view.platforms = []; self.view.quickStats = {};
 
-        Platform.find({uid: req.user._id}, function (err, codes) {
+        Platform.find({uid: req.user._id}, function (err, platforms) {
             if (err) return cb(Utils.commonMsg(500));
 
-            if (codes.length === 0) {
+            if (platforms.length === 0) {
                 return cb({ message: "No Platforms found!! <a href='/platforms/create'>Add Now</a>" });
             }
+            self.view.platforms = platforms;
 
-            self.view.platforms = codes;
-            cb(null);
+            var ids = [];
+            platforms.forEach(function (el) {
+                ids.push(el._id);
+            });
+
+            Stat.find({ pid: {$in : ids}}, function (err, stats) {
+                if (err || stats.length == 0) return cb(null);
+
+                var pageviews = 0, allowing = 0, blocking = 0;
+                stats.forEach(function (el) {
+                    allowing += el.allow;
+                    blocking += el.block;
+
+                    pageviews += el.allow + el.block;
+                });
+                self.view.quickStats = {
+                    pageviews: pageviews,
+                    allowing: allowing,
+                    blocking: blocking,
+                    percent: Number((blocking / pageviews) * 100).toFixed(2)
+                }
+                cb(null);
+            });
         });
     };
 
@@ -138,7 +159,7 @@ var Platforms = (function () {
             return cb(Utils.commonMsg(400));
         }
 
-        this.view.code = '<script type="text/javascript">(function() {window.__adbMonID = "'+ _id +'";function l(u) {var e = document.createElement("script");e.type = "text/javascript";e.src = "//monitoradblock.com/js/" + u;e.async = true;var x = document.getElementsByTagName("script")[0];x.parentNode.insertBefore(e, x);}l("adbmon.min.js");})();</script>';
+        this.view.code = '<script type="text/javascript">(function(){window.__adbMonID="'+ _id +'";function l(u){var e=document.createElement("script");e.type="text/javascript";e.src="//monitoradblock.com/js/"+u;e.async=true;var x= document.getElementsByTagName("script")[0];x.parentNode.insertBefore(e, x);}l("adbmon.min.js");})();</script>';
         cb(null);
     };
 

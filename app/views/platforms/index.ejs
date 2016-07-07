@@ -2,29 +2,29 @@
 <div class="row">
     <div class="col-sm-6 col-lg-3">
         <div class="widget-simple-chart text-right card-box">
-            <h3 class="text-primary counter">5685</h3>
+            <h3 class="text-primary counter"><%= quickStats.pageviews || 0 %></h3>
             <p class="text-muted text-nowrap">Total PageViews</p>
         </div>
     </div>
 
     <div class="col-sm-6 col-lg-3">
         <div class="widget-simple-chart text-right card-box">
-            <h3 class="text-success counter">2562</h3>
+            <h3 class="text-success counter"><%= quickStats.allowing || 0 %></h3>
             <p class="text-muted text-nowrap">Allowing Ads</p>
         </div>
     </div>
 
     <div class="col-sm-6 col-lg-3">
-        <div class="widget-simple-chart text-right card-box">
-            <h3 class="text-danger counter">5685</h3>
+        <div class="widget-simple-chart text-right card-box">0
+            <h3 class="text-danger counter"><%= quickStats.blocking || 0 %></h3>
             <p class="text-muted text-nowrap">Blocking Ads</p>
         </div>
     </div>
 
     <div class="col-sm-6 col-lg-3">
         <div class="widget-simple-chart text-right card-box">
-            <h3 class="text-info counter">5685</h3>
-            <p class="text-muted text-nowrap">Percent</p>
+            <h3 class="text-info counter"><%= quickStats.percent || 0.00 %></h3>
+            <p class="text-muted text-nowrap">Percent Blocked</p>
         </div>
     </div>
 </div>

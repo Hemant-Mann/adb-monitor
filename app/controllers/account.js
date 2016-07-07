@@ -64,6 +64,11 @@ var Account = (function () {
         }  
     };
 
+    p.billing = function (req, res, next) {
+        
+        next(null);
+    };
+
     p.__class = controller.name.toLowerCase();
     return p;
 }());
