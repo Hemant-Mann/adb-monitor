@@ -12,6 +12,7 @@ var Payment = (function () {
 
     var controller = function Payment() {}
     controller.prototype = new Shared;
+    controller.prototype.parent = Shared.prototype;
 
     var p = new controller();
     /**

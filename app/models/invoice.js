@@ -4,10 +4,10 @@ var Schema = mongoose.Schema;
 // create a schema
 var invSchema = new Schema({
     uid: {
-        type: type: Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true
     },
-    subid: {
+    plan: { // plan id
     	type: Schema.Types.ObjectId,
     	required: true
     },
@@ -15,14 +15,14 @@ var invSchema = new Schema({
     	type: Number,
     	required: true
     },
-    payid: {
-        type: Date,
+    payid: {    // paypal payment id
+        type: String,
         default: Date.now
     },
     created: {
         type: Number,
         required: true
-    }
+    },
     live: {
         type: Boolean,
         default: false,

@@ -11,6 +11,8 @@ var planSchema = new Schema({
     	type: Number,
     	required: true
     },
+    description: String,
+    currency: String,
     modified: {
         type: Date,
         default: Date.now
@@ -18,12 +20,12 @@ var planSchema = new Schema({
     visitors: {
         type: Number,
         required: true
-    }
+    },
     live: {
         type: Boolean,
         default: false,
     },
-    period: {
+    period: { // No of days
         type: Number,
         required: true
     }

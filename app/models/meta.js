@@ -5,7 +5,7 @@ var Utils = require('../scripts/util');
 // create a schema
 var metaSchema = new Schema({
     prop: String,
-    pid: Schema.Types.ObjectId,
+    pid: Schema.Types.ObjectId, // property id
     val: String
 }, { collection: 'metas' });
 

@@ -108,7 +108,7 @@ var Controller = (function () {
          * @param  {Object} req Express Request Object
          * @return {Boolean} False on failure else sets user to views
          */
-        _secure: function (req) {
+        _secure: function (req, res) {
             if (!req.user) {
                 req.session.previousPath = req.originalUrl
                 return false;

@@ -14,11 +14,30 @@ var Platforms = (function () {
     var controller = function Platforms() {}
     // inherit Methods|Properties
     controller.prototype = new Shared;
-    
+    controller.prototype.parent = Shared.prototype;
+
     var p = new controller();
 
     p.secure = ['index', 'stats', 'update', 'delete', 'create', 'getCode']; // Add Pages|Methods to this array which needs authentication
     p.defaultLayout = "layouts/client"; // change the layout
+
+    /**
+     * Overriding parent method, checking subscription before using platform
+     * @param  {Object} req Express Request Object
+     * @return {Boolean} True if authenticated
+     */
+    p._secure = function (req, res) {
+        var basic = this.parent._secure.call(this, req); // call the parent method for basic authentication
+
+        if (!basic) return false;
+
+        var subscription = req.session.subscription;
+        var today = new Date();
+        if (!subscription || !subscription.end || subscription.end < today) {
+            return res.redirect('/account/billing');
+        }
+        return true;
+    }
 
     /**
      * Default Index function showing all the platforms
@@ -68,9 +87,7 @@ var Platforms = (function () {
     p.stats = function (req, res, cb) {
         var self = this,
             dateQuery = Utils.dateQuery(req.query),
-            start = dateQuery.start,
-            end = dateQuery.end,
-            created = { $gte: start, $lte: end },
+            created = { $gte: dateQuery.start, $lte: dateQuery.end },
             device = req.query.device || '';
 
         self.view.device = device;
@@ -78,7 +95,7 @@ var Platforms = (function () {
         self.view.platform = req.platform;
         self.view.today = Utils.today;
 
-        Tracking.display(req.platform._id, created, device, function (err, result) {
+        Tracking.display(req.platform._id, created, device, function (result) {
             self.view.stats = result.stats;
             self.view.total = result.total;
 
@@ -116,9 +133,7 @@ var Platforms = (function () {
             }
 
             c.remove(function (err) {
-                if (err) {
-                    return cb(Utils.commonMsg(500));
-                }
+                if (err) return cb(Utils.commonMsg(500));
 
                 return cb(Utils.commonMsg(200, 'Platform was removed'));
             });
@@ -159,7 +174,7 @@ var Platforms = (function () {
             return cb(Utils.commonMsg(400));
         }
 
-        this.view.code = '<script type="text/javascript">(function(){window.__adbMonID="'+ _id +'";function l(u){var e=document.createElement("script");e.type="text/javascript";e.src="//monitoradblock.com/js/"+u;e.async=true;var x= document.getElementsByTagName("script")[0];x.parentNode.insertBefore(e, x);}l("adbmon.min.js");})();</script>';
+        this.view.code = '<script type="text/javascript">(function(){window.__adbMonID="'+ _id +'";function l(u){var e=document.createElement("script");e.type="text/javascript";e.src ="//monitoradblock.com/js/"+u;e.async=true;var x= document.getElementsByTagName("script")[0];x.parentNode.insertBefore(e, x);}l("adbmon.min.js");})();</script>';
         cb(null);
     };
 

@@ -1,6 +1,7 @@
 var Shared = require('./controller');
 var User = require('../models/user');
 var Meta = require('../models/meta');
+var Subscription = require('../models/subscription');
 
 var passport = require('passport');
 var Utils = require('../scripts/util');
@@ -16,6 +17,7 @@ var Auth = (function () {
 
     // inherit Methods|Properties
     controller.prototype = new Shared;
+    controller.prototype.parent = Shared.prototype;
     
     var a = new controller();
     a.defaultLayout = "layouts/client";
@@ -85,7 +87,13 @@ var Auth = (function () {
                         url = req.session.previousPath
                         delete req.session.previousPath;
                     }
-                    return res.redirect(url);
+
+                    Subscription.findOne({ uid: user._id }, function (err, s) {
+                        if (!err) {
+                            req.session.subscription = s || {};
+                        }
+                        return res.redirect(url);
+                    });
                 });
             })(req, res);
         } else {

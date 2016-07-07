@@ -9,6 +9,7 @@ var Home = (function () {
 
     var controller = function Home() {}
     controller.prototype = new Shared;
+    controller.prototype.parent = Shared.prototype;
 
     var h = new controller();
     /**

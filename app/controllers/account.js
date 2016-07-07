@@ -1,6 +1,7 @@
 var Shared = require('./controller');
 var User = require('../models/user');
 var Utils = require('../scripts/util');
+var Invoice = require('../models/invoice');
 
 /**
  * Account Controller
@@ -11,13 +12,14 @@ var Account = (function () {
     var controller = function Account() {}
     // inherit Methods|Properties
     controller.prototype = new Shared;
+    controller.prototype.parent = Shared.prototype;
     
-    var p = new controller();
+    var a = new controller();
 
-    p.secure = ['settings']; // Add Pages|Methods to this array which needs authentication
-    p.defaultLayout = "layouts/client"; // change the layout
+    a.secure = ['settings', 'billing']; // Add Pages|Methods to this array which needs authentication
+    a.defaultLayout = "layouts/client"; // change the layout
 
-    p.settings = function (req, res, cb) {
+    a.settings = function (req, res, cb) {
         var self = this;
         self.view.message = null;
         self.view.errors = {};
@@ -64,13 +66,20 @@ var Account = (function () {
         }  
     };
 
-    p.billing = function (req, res, next) {
-        
+    a.billing = function (req, res, next) {
+        var self = this;
+        Invoice.find({ uid: req.user._id }, function (err, invoices) {
+            if (err || invoices.length == 0) {
+                self.view.invoices = [];
+            }
+
+            self.view.invoices = invoices;
+        });
         next(null);
     };
 
-    p.__class = controller.name.toLowerCase();
-    return p;
+    a.__class = controller.name.toLowerCase();
+    return a;
 }());
 
 module.exports = Account;

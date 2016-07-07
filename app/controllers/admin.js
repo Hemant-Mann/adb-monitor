@@ -8,6 +8,7 @@ var Admin = (function () {
 
     var controller = function Admin() {}
     controller.prototype = new Shared;
+    controller.prototype.parent = Shared.prototype;
 
     var a = new controller;
 	a.index = function (req, res, next) {

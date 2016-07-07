@@ -80,21 +80,13 @@ var Tracking = {
     display: function (pid, created, device, cb) {
         var s = {}, total = { allowing: 0, blocking: 0, visitors: 0, pageviews: 0 };
 
-        var query = {
-            pid: pid,
-            created: created
-        };
+        var query = { pid: pid, created: created };
         if (device) {
             query.device = device.toLowerCase();
         }
-        Stat.find(query, function (err, stats) {
-            if (err) return cb(500);
-            
-            if (!stats || stats.length === 0) {
-                return cb(true, {
-                    stats: {},
-                    total: total
-                });
+        Stat.find(query, function (err, stats) {            
+            if (err || !stats || stats.length === 0) {
+                return cb({ stats: {}, total: total });
             }
 
             stats.forEach(function (record) {
@@ -115,23 +107,15 @@ var Tracking = {
                 total.pageviews += record.allow + record.block;
             });
             if (query.device) {
-                query = { pid: pid, created: created, device: device.toLowerCase() };
+                query = { pid: pid, modified: created, device: device.toLowerCase() };
             } else {
-                query = { pid: pid, created: created };
+                query = { pid: pid, modified: created };
             }
             Visitor.find(query, function (err, v) {
-                if (err) return cb(Utils.commonMsg(500));
-                var unique = {}, prop;
+                if (err) return cb({ stats: {}, total: total });
+                total.visitors = v.length;
 
-                v.forEach(function (record) {
-                    unique[record.cookie] = record;
-                });
-                for (prop in unique) total.visitors++;
-
-                return cb(false, {
-                    stats: s,
-                    total: total
-                });
+                return cb({ stats: s, total: total });
             });
         });
     }
