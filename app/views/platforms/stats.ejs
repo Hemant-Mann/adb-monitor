@@ -1,58 +1,73 @@
-        <div class="row">
-            <div class="col-lg-12">
-                <h3 class="page-header">Stats: <%= platform.domain %></h3>
-            </div>
-            <!-- /.col-lg-12 -->
+<div class="row">
+    <div class="col-sm-6">
+        <button type="button" class="btn btn-teal bold">All</button>
+        <button type="button" class="btn btn-default bold"><i class="fa fa-desktop"></i>&nbsp; Desktop</button>
+        <button type="button" class="btn btn-default bold"><i class="fa fa-tablet"></i>&nbsp; Tablet</button>
+        <button type="button" class="btn btn-default bold"><i class="fa fa-mobile"></i>&nbsp; Mobile</button>
+    </div>
+    <div class="col-sm-6">
+        <div class="text-right-responsive">
+            <select class="form-control">
+                <option>Today</option>
+                <option>Yesterday</option>
+                <option>Last 7 Days</option>
+                <option selected="">Last 30 Days</option>
+                <option>Last 60 Days</option>
+                <option>Last 90 Days</option>
+            </select>
         </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <i class="fa fa-bar-chart-o fa-fw"></i> Chart
-                    </div>
-                    <!-- /.panel-heading -->
-                    <div class="panel-body">
-                        <div id="morris-area-chart"></div>
-                    </div>
-                    <!-- /.panel-body -->
-                </div>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> <%= platform.name %> (<%= platform.domain %>)
             </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="morris-area-chart"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Visitor Stats
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Visitors</th>
+                                <th>Allowing</th>
+                                <th>Blocking</th>
+                                <th>Pageviews</th>
+                                <th>Pages / Visit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><%= total.visitors %></td>
+                                <td><%= total.allowing %></td>
+                                <td><%= total.blocking %></td>
+                                <td><%= total.pageviews %></td>
+                                <td><%= total.pageviews / total.visitors %></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.table-responsive -->
+            </div>
+            <!-- /.panel-body -->
         </div>
 
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        Visitor Stats
-                    </div>
-                    <!-- /.panel-heading -->
-                    <div class="panel-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Visitors</th>
-                                        <th>Allowing</th>
-                                        <th>Blocking</th>
-                                        <th>Pageviews</th>
-                                        <th>Pages / Visit</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><%= total.visitors %></td>
-                                        <td><%= total.allowing %></td>
-                                        <td><%= total.blocking %></td>
-                                        <td><%= total.pageviews %></td>
-                                        <td><%= total.pageviews / total.visitors %></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- /.table-responsive -->
-                    </div>
-                    <!-- /.panel-body -->
-                </div>
-
-            </div>
-        </div>
+    </div>
+</div>

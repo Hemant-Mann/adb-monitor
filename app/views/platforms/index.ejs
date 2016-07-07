@@ -1,27 +1,30 @@
 <%- include modals/code.html %>
-<!-- Page-Title -->
-<div class="row">
-    <div class="col-sm-12">
-        <h4 class="page-title">Dashboard !</h4>
-    </div>
-</div>
-<!-- Page-Title -->
-
-
 <div class="row">
     <div class="col-sm-6 col-lg-3">
         <div class="widget-simple-chart text-right card-box">
-            <div class="circliful-chart" data-dimension="90" data-text="35%" data-width="5" data-fontsize="14" data-percent="35" data-fgcolor="#5fbeaa" data-bgcolor="#ebeff2"></div>
-            <h3 class="text-success counter">2562</h3>
-            <p class="text-muted text-nowrap">Total Sales today</p>
+            <h3 class="text-primary counter">5685</h3>
+            <p class="text-muted text-nowrap">Total PageViews</p>
         </div>
     </div>
 
     <div class="col-sm-6 col-lg-3">
         <div class="widget-simple-chart text-right card-box">
-            <div class="circliful-chart" data-dimension="90" data-text="75%" data-width="5" data-fontsize="14" data-percent="75" data-fgcolor="#3bafda" data-bgcolor="#ebeff2"></div>
-            <h3 class="text-primary counter">5685</h3>
-            <p class="text-muted text-nowrap">Daily visitors</p>
+            <h3 class="text-success counter">2562</h3>
+            <p class="text-muted text-nowrap">Allowing Ads</p>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="widget-simple-chart text-right card-box">
+            <h3 class="text-danger counter">5685</h3>
+            <p class="text-muted text-nowrap">Blocking Ads</p>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="widget-simple-chart text-right card-box">
+            <h3 class="text-info counter">5685</h3>
+            <p class="text-muted text-nowrap">Percent</p>
         </div>
     </div>
 </div>
@@ -30,16 +33,11 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="card-box">
-            <h4 class="text-dark header-title m-t-0">Your Platforms</h4>
-            <p class="text-muted m-b-25 font-13">
-                Your awesome text goes here.
-            </p>
-
+            <h4 class="text-dark header-title m-t-0 text-center">Your Platforms</h4>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th># ID</th>
                             <th>Name</th>
                             <th>Domain</th>
                             <th>Status</th>
@@ -49,7 +47,6 @@
                     <tbody>
                         <% for (i in platforms) { %>
                         <tr>
-                            <td><%= platforms[i]._id %></td>
                             <td><%= platforms[i].name %></td>
                             <td><%= platforms[i].domain %></td>
 
@@ -61,7 +58,7 @@
                                 <% } %>
                             </td>
                             <td>
-                                <a href="/platforms/<%= platforms[i]._id %>.html" class="btn btn-primary btn-xs"><i class="fa fa-code"></i> Stats</a>
+                                <a href="/platforms/<%= platforms[i]._id %>.html" class="btn btn-primary btn-xs"><i class="fa fa-bar-chart"></i> Stats</a>
 
                                 <a href="platforms/getCode" data-id="<%= platforms[i]._id %>" class="getCode btn btn-default btn-xs"><i class="fa fa-code"></i> Get Code</a>
 
@@ -77,8 +74,6 @@
                     </tbody>
                 </table>
             </div>
-
-            <a href="/platforms/create.html" class="btn btn-default"><i class="fa fa-plus"></i> Add More</a>
         </div>
     </div>
     <!-- end col -8 -->
