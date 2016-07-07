@@ -8,3 +8,4 @@ npm-debug.log
 
 app/config/mail.js
 app/config/seo.js
+app/config/payment.js
