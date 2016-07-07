@@ -2,6 +2,8 @@ var Meta = require('../models/meta');
 var User = require('../models/user');
 var Mail = require('../scripts/mail');
 var mailConfig = require('../config/mail');
+var Subscription = require('../models/subscription');
+var Plan = require('../models/plan');
 
 var Auth = {
 	register: function (user, cb) {
@@ -16,6 +18,21 @@ var Auth = {
 					return cb(err);
 				}
 
+				// Save a temporary subscription on registration
+				Plan.findOne({ name: 'Basic' }, function (err, plan) {
+					if (err) return;
+
+					var start = new Date(); start.setDate(start.getDate() - 1);
+					var end = new Date(); end.setDate(end.getDate() + 1);
+					var sub = new Subscription({
+						uid: user._id,
+						plan: plan._id,
+						start: start,
+						end: end,
+						live: true
+					});
+					sub.save();
+				});
 				self._register(user, cb);
 			});
 		});

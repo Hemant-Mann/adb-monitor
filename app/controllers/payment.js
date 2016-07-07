@@ -3,6 +3,9 @@ var mail = require('../config/mail');
 var paypal = require('paypal-rest-sdk');
 var paymentConfig = require('../config/payment');
 var Utils = require('../scripts/util');
+var Subscription = require('../models/subscription');
+var Plan = require('../models/plan');
+var Invoice = require('../models/invoice');
 
 /**
  * Payment Controller
@@ -15,33 +18,17 @@ var Payment = (function () {
     controller.prototype.parent = Shared.prototype;
 
     var p = new controller();
-    /**
-     * Override parent method, set variables which are common
-     * to all the views
-     */
-    p._initView = function () {
-    };
+    p.secure = ['create', 'cancel', 'success'];
     
     p.create = function (req, res, cb) {
         this._noview();
         paypal.configure(paymentConfig);
-        var payment = {
-          "intent": "sale",
-          "payer": {
-            "payment_method": "paypal"
-          },
-          "redirect_urls": {
-            "return_url": "http://"+ mail.domain + "/payment/success",
-            "cancel_url": "http://"+ mail.domain + "/payment/cancel"
-          },
-          "transactions": [{
-            "amount": {
-              "total": "1.00",
-              "currency": "USD"
-            },
-            "description": "My awesome payment for adbmonitor"
-          }]
-        };
+        var payment = req.session.payment;
+
+        if (!payment) {
+            return cb(new Error("Payment Not authorized"));
+        }
+        delete req.session.payment;
 
         paypal.payment.create(payment, function (err, pay) {
             if (err) {
@@ -49,12 +36,15 @@ var Payment = (function () {
             }
 
             if (pay.payer.payment_method === 'paypal') {
-                req.session.paymentId = pay.id;
+                req.session.paymentInfo = {
+                    id: pay.id,
+                    amount: 50 // here add amount of transaction
+                };
 
-                var redirectUrl;
+                var redirectUrl, link, i;
 
-                for(var i=0; i < pay.links.length; i++) {
-                    var link = pay.links[i];
+                for(i = 0; i < pay.links.length; i++) {
+                    link = pay.links[i];
                     if (link.method === 'REDIRECT') {
                         redirectUrl = link.href;
                     }
@@ -65,19 +55,43 @@ var Payment = (function () {
     };
     
     p.success = function (req, res, cb) {
-        this._jsonView();
-        cb(null);
+        this._jsonView(); var self = this;
 
-        var paymentId = req.session.paymentId;
-        var payerId = req.param('PayerID');
+        var paymentInfo = req.session.paymentInfo || {};
+        var paymentId = paymentInfo.id;
+        var payerId = req.param('PayerID'),
+            subscription = req.session.subscription || {},
+            details = { "payer_id": payerId };
 
-        var details = { "payer_id": payerId };
         paypal.payment.execute(paymentId, details, function (err, payment) {
             if (err) {
                 return cb(Utils.commonMsg(500));
             }
 
-            return res.send('Payment is complete');
+            self.view.payment = payment;
+            var invoice = new Invoice({
+                uid: req.user._id,
+                plan: subscription.plan,
+                price: paymentInfo.amount,
+                payid: paymentId,
+                live: true
+            });
+            invoice.save();
+
+            Plan.findOne({ _id: subscription.plan }, function (err, plan) {
+                if (err || !plan) return cb(Utils.commonMsg(500));
+
+                var start = new Date(); var end = new Date(); end.setHours(0, 0, 0, 0);
+                end.setDate(start.getDate() + plan.period);
+
+                Subscription.update({ _id: req.session.subscription._id }, {$set: {
+                    start: start,
+                    end: end
+                }}, function (err) {
+
+                });
+                return res.send('Payment is complete');
+            });
         });
     };
     

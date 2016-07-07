@@ -11,13 +11,13 @@ var invSchema = new Schema({
     	type: Schema.Types.ObjectId,
     	required: true
     },
-    price: {
+    amount: {
     	type: Number,
     	required: true
     },
     payid: {    // paypal payment id
         type: String,
-        default: Date.now
+        required: true
     },
     created: {
         type: Number,

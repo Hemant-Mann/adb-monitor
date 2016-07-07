@@ -12,7 +12,10 @@ var planSchema = new Schema({
     	required: true
     },
     description: String,
-    currency: String,
+    currency: {
+        type: String,
+        required: true
+    },
     modified: {
         type: Date,
         default: Date.now
