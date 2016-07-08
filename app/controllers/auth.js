@@ -43,6 +43,7 @@ var Auth = (function () {
 
     a.register = function (req, res, cb) {
         this.view.errors = {}; var self = this;
+        var plan = req.query.plan || 'free';
 
         if (req.method === 'POST') {
             if (req.body.password !== req.body.repeatPass) {
@@ -50,7 +51,7 @@ var Auth = (function () {
             }
             var user = new User(req.body);
 
-            AuthService.register(user, function (err) {
+            AuthService.register(user, plan, function (err) {
                 if (err.errors) {
                     self.view.errors = err.errors;
                 }
@@ -91,6 +92,9 @@ var Auth = (function () {
                     Subscription.findOne({ uid: user._id }, function (err, s) {
                         if (!err) {
                             req.session.subscription = s || {};
+                        }
+                        if (!s.live) {
+                            url = '/account/billing';
                         }
                         return res.redirect(url);
                     });

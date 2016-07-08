@@ -1,12 +1,14 @@
 var Meta = require('../models/meta');
 var User = require('../models/user');
 var Mail = require('../scripts/mail');
+var Utils = require('../scripts/util');
 var mailConfig = require('../config/mail');
 var Subscription = require('../models/subscription');
 var Plan = require('../models/plan');
+var Invoice = require('../models/invoice');
 
 var Auth = {
-	register: function (user, cb) {
+	register: function (user, planName, cb) {
 		var self = this;
 		User.findOne({ email: user.email }, function (err, u) {
 			if (err || u) {
@@ -18,22 +20,36 @@ var Auth = {
 					return cb(err);
 				}
 
-				// Save a temporary subscription on registration
-				Plan.findOne({ name: 'Basic' }, function (err, plan) {
-					if (err) return;
+				// Save a subscription an create an invoice on registration
+				var regex = new RegExp('^' + planName + '$', "i");
+				Plan.findOne({ name: regex }, function (err, plan) {
+					if (err || !plan) {
+						user.remove();
+						return cb(new Error("Invalid Request"));
+					}
 
-					var start = new Date(); start.setDate(start.getDate() - 1);
-					var end = new Date(); end.setDate(end.getDate() + 1);
+					var start = new Date(); start.setHours(0, 0, 0, 0);
+					var end = new Date(); end.setDate(end.getDate() + plan.period);
+					end.setHours(23, 59, 59, 999);
+
 					var sub = new Subscription({
 						uid: user._id,
 						plan: plan._id,
 						start: start,
-						end: end,
-						live: true
+						end: end
 					});
 					sub.save();
+
+					var invoice = new Invoice({
+						uid: user._id,
+						plan: plan._id,
+						amount: plan.price,
+						payid: ""
+					});
+					invoice.save();
+
+					self._register(user, cb);
 				});
-				self._register(user, cb);
 			});
 		});
 	},
@@ -46,7 +62,6 @@ var Auth = {
 		
 		meta.save(function (err, meta) {
 		    if (err) {
-		        user.remove();
 		        return cb(Utils.commonMsg(500));
 		    }
 

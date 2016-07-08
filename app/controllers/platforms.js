@@ -33,7 +33,7 @@ var Platforms = (function () {
 
         var subscription = req.session.subscription;
         var today = new Date();
-        if (!subscription || !subscription.end || subscription.end < today) {
+        if (!subscription || !subscription.live || !subscription.end || subscription.end < today) {
             return res.redirect('/account/billing');
         }
         return true;

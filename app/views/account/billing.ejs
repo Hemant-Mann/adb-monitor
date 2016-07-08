@@ -41,6 +41,7 @@
                             <th>Method</th>
                             <th>Amount</th>
                             <th>Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -54,6 +55,11 @@
                                 <span class="label label-success">Paid</span>
                                 <% } else { %>
                                 <span class="label label-warning">Pending</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <% if (!invoices[i].live) { %>
+                                <a href="/payment/create/<%= invoices[i]._id %>" class="btn btn-primary btn-xs"> Pay Now</a>
                                 <% } %>
                             </td>
                         </tr>

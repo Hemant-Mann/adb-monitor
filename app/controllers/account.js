@@ -69,52 +69,10 @@ var Account = (function () {
         }
     };
 
-    a._expired = function (subscription) {
-        var today = new Date();
-
-        if (!subscription || subscription.end < today) {
-            return true;
-        }
-        return false;
-    };
-
-    a._payment = function (subscription, req, cb) {
-        var self = this;
-        // if payment already set then don't set it again
-        self.view.payment = true;
-        if (!subscription || req.session.payment) {
-            return cb(null);
-        }
-
-        Plan.findOne({ _id: subscription.plan }, function (err, plan) {
-            if (err || !plan) return cb(null);
-
-            var payment = {
-                "intent": "sale",
-                "payer": {
-                    "payment_method": "paypal"
-                },
-                "redirect_urls": {
-                    "return_url": "http://" + mail.domain + "/payment/success",
-                    "cancel_url": "http://" + mail.domain + "/payment/cancel"
-                },
-                "transactions": [{
-                    "amount": {
-                        "total": plan.price,
-                        "currency": plan.currency
-                    },
-                    "description": plan.description
-                }]
-            };
-
-            req.session.payment = payment;
-            return cb();
-        });
-    }
-
     a.billing = function (req, res, next) {
-        var self = this;
+        var self = this, subscription = req.session.subscription
         self.view.payment = false;
+        self.view.subscription = subscription;
 
         Invoice.find({ uid: req.user._id }, function (err, invoices) {
             if (err || invoices.length == 0) {
@@ -122,11 +80,7 @@ var Account = (function () {
             } else {
                 self.view.invoices = invoices;
             }
-
-            var subscription = req.session.subscription
-            if (self._expired(subscription)) { // show payment option only when 
-                return self._payment(subscription, req, next);
-            }
+            
             return next(null);
         });
     };

@@ -15,13 +15,19 @@ var invSchema = new Schema({
     	type: Number,
     	required: true
     },
+    currency: {
+        type: String,
+        default: 'USD',
+        required: true
+    },
     payid: {    // paypal payment id
         type: String,
         required: true
     },
     created: {
         type: Number,
-        required: true
+        required: true,
+        default: Date.now
     },
     live: {
         type: Boolean,

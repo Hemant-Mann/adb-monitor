@@ -19,49 +19,81 @@ var Payment = (function () {
 
     var p = new controller();
     p.secure = ['create', 'cancel', 'success'];
-    
-    p.create = function (req, res, cb) {
-        this._noview();
-        paypal.configure(paymentConfig);
-        var payment = req.session.payment;
 
-        if (!payment) {
-            return cb(new Error("Payment Not authorized"));
-        }
-        delete req.session.payment;
+    p._pay = function (invid, cb) {
+        Invoice.findOne({ _id: invid, live: false }, function (err, inv) {
+            if (err || !inv) return cb(new Error("Invalid Request"));
 
-        paypal.payment.create(payment, function (err, pay) {
-            if (err) {
-                return cb(err);
-            }
-
-            if (pay.payer.payment_method === 'paypal') {
-                req.session.paymentInfo = {
-                    id: pay.id,
-                    amount: 50 // here add amount of transaction
+            Plan.findOne({ _id: inv.plan }, function (err, plan) {
+                if (err || !plan) return cb(new Error("Invalid Request"));
+                
+                var payment = {
+                    "intent": "sale",
+                    "payer": {
+                        "payment_method": "paypal"
+                    },
+                    "redirect_urls": {
+                        "return_url": "http://" + mail.domain + "/payment/success",
+                        "cancel_url": "http://" + mail.domain + "/payment/cancel"
+                    },
+                    "transactions": [{
+                        "amount": {
+                            "total": plan.price,
+                            "currency": plan.currency
+                        },
+                        "description": plan.description
+                    }]
                 };
 
-                var redirectUrl, link, i;
+                return cb(false, invoice, payment);
+            });
+        });
+    }
+    
+    p.create = function (req, res, cb) {
+        var self = this; this._noview();
+        paypal.configure(paymentConfig);
+        if (!req.session.subscription) return res.redirect('/auth/logout');
 
-                for(i = 0; i < pay.links.length; i++) {
-                    link = pay.links[i];
-                    if (link.method === 'REDIRECT') {
-                        redirectUrl = link.href;
+        self._pay(Utils.parseParam(req.params.invid), function (err, invoice, payment) {
+            if (err) return cb(err);
+
+            req.session.invoice = invoice;
+
+            paypal.payment.create(payment, function (err, pay) {
+                if (err) return cb(err);
+
+                if (pay.payer.payment_method === 'paypal') {
+                    req.session.paymentInfo = {
+                        id: pay.id,
+                        amount: 50 // here add amount of transaction
+                    };
+
+                    var redirectUrl, link, i;
+
+                    for(i = 0; i < pay.links.length; i++) {
+                        link = pay.links[i];
+                        if (link.method === 'REDIRECT') {
+                            redirectUrl = link.href;
+                        }
                     }
+                    return res.redirect(redirectUrl);
+                } else {
+                    return cb(Utils.commonMsg(500));
                 }
-                return res.redirect(redirectUrl);
-            }
+            });
         });
     };
     
     p.success = function (req, res, cb) {
         this._jsonView(); var self = this;
 
-        var paymentInfo = req.session.paymentInfo || {};
-        var paymentId = paymentInfo.id;
-        var payerId = req.param('PayerID'),
+        var paymentInfo = req.session.paymentInfo || {},
+            paymentId = paymentInfo.id,
+            payerId = req.param('PayerID'),
             subscription = req.session.subscription || {},
-            details = { "payer_id": payerId };
+            details = { "payer_id": payerId },
+            invoice = req.session.invoice;
 
         paypal.payment.execute(paymentId, details, function (err, payment) {
             if (err) {
@@ -69,28 +101,25 @@ var Payment = (function () {
             }
 
             self.view.payment = payment;
-            var invoice = new Invoice({
-                uid: req.user._id,
-                plan: subscription.plan,
-                price: paymentInfo.amount,
-                payid: paymentId,
-                live: true
-            });
+            invoice.live = true;
             invoice.save();
 
             Plan.findOne({ _id: subscription.plan }, function (err, plan) {
                 if (err || !plan) return cb(Utils.commonMsg(500));
 
-                var start = new Date(); var end = new Date(); end.setHours(0, 0, 0, 0);
+                var start = new Date(), end = new Date(); end.setHours(0, 0, 0, 0);
                 end.setDate(start.getDate() + plan.period);
 
-                Subscription.update({ _id: req.session.subscription._id }, {$set: {
+                Subscription.update({ _id: subscription._id }, {$set: {
                     start: start,
                     end: end
                 }}, function (err) {
 
                 });
-                return res.send('Payment is complete');
+
+                delete req.session.invoice;
+                delete req.session.paymentInfo;
+                return cb();
             });
         });
     };
