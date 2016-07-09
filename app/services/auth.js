@@ -44,7 +44,7 @@ var Auth = {
 						uid: user._id,
 						plan: plan._id,
 						amount: plan.price,
-						payid: ""
+						payid: "PAYPAL_ID"
 					});
 					invoice.save();
 

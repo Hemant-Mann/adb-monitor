@@ -111,9 +111,17 @@ var Platforms = (function () {
         self._jsonView();
 
         var platform = req.platform;
-        var live = Number(req.body.live);
-        platform.live = live;
+        var live = req.body.live,
+            whitelist = req.body.whitelist;
 
+        if (live) {
+            live = Number(live);
+            platform.live = live;
+        } else if (whitelist) {
+            whitelist = Number(whitelist);
+            platform.whitelist = whitelist;
+        }
+        
         platform.save();
         cb(Utils.commonMsg(200, "Platform updated"));
     };
@@ -195,6 +203,27 @@ var Platforms = (function () {
 
             req.platform = platform;
             next();
+        });
+    };
+
+    p.api = function (req, res, next) {
+        var cb = req.query.callback;
+        if (!req.params.pid || !cb) return next(new Error("Invalid Request"));
+        this._noview();
+
+        Platform.findOne({ _id: Utils.parseParam(req.params.pid) }, function (err, p) {
+            if (err || !p) {
+                var err = new Error("Invalid Request");
+                err.status = 400;
+                return next(err);
+            }
+
+            var platform = {
+                whitelist: p.whitelist
+            };
+
+
+            res.send(cb + "(" + JSON.stringify(platform) + ")");
         });
     };
 

@@ -45,7 +45,7 @@ var Payment = (function () {
                     }]
                 };
 
-                return cb(false, invoice, payment);
+                return cb(false, inv, payment);
             });
         });
     }
@@ -101,6 +101,7 @@ var Payment = (function () {
             }
 
             self.view.payment = payment;
+            invoice.payid = paymentId;
             invoice.live = true;
             invoice.save();
 

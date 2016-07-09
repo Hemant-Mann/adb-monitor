@@ -9,6 +9,10 @@ router.get('/', function (req, res, next) {
 	Platforms._init(req, res, next, {method: 'index'});
 });
 
+router.get('/api/:pid', function (req, res, next) {
+	Platforms._init(req, res, next, { method: 'api' });
+});
+
 // Controller - methods
 var regex = Utils.makeRegex(['index', 'getCode'], ['html', 'json']);
 router.get(regex, function (req, res, next) {
