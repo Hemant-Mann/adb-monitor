@@ -1,7 +1,6 @@
 var Shared = require('./controller');
 var User = require('../models/user');
 var Meta = require('../models/meta');
-var Subscription = require('../models/subscription');
 
 var passport = require('passport');
 var Utils = require('../scripts/util');
@@ -43,7 +42,6 @@ var Auth = (function () {
 
     a.register = function (req, res, cb) {
         this.view.errors = {}; var self = this;
-        var plan = req.query.plan || 'free';
 
         if (req.method === 'POST') {
             if (req.body.password !== req.body.repeatPass) {
@@ -51,7 +49,7 @@ var Auth = (function () {
             }
             var user = new User(req.body);
 
-            AuthService.register(user, plan, function (err) {
+            AuthService.register(user, function (err) {
                 if (err.errors) {
                     self.view.errors = err.errors;
                 }
@@ -89,13 +87,7 @@ var Auth = (function () {
                         delete req.session.previousPath;
                     }
 
-                    Subscription.findOne({ uid: user._id }, function (err, s) {
-                        req.session.subscription = s || {};
-                        if (!s.live) {
-                            url = '/account/billing';
-                        }
-                        return res.redirect(url);
-                    });
+                    return res.redirect(url);
                 });
             })(req, res);
         } else {

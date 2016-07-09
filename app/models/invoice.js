@@ -7,10 +7,6 @@ var invSchema = new Schema({
         type: Schema.Types.ObjectId,
         required: true
     },
-    plan: { // plan id
-    	type: Schema.Types.ObjectId,
-    	required: true
-    },
     amount: {
     	type: Number,
     	required: true

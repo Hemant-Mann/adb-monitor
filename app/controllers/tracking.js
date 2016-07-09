@@ -65,6 +65,8 @@ var Tracking = {
             device = 'tablet';
         } else if (this._isMobile(ua)) {
             device = 'mobile';
+        } else if (browser.match(/mobile/i)) {
+            device = 'mobile';
         }
         // Check Visitor
         var whitelist = params.wh || false;

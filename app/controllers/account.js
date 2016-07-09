@@ -70,23 +70,21 @@ var Account = (function () {
     };
 
     a.billing = function (req, res, next) {
-        var self = this, subscription = req.session.subscription
-        self.view.payment = false;
-        self.view.subscription = subscription;
+        var self = this;
 
-        Invoice.find({ uid: req.user._id }, function (err, invoices) {
+        Invoice.find({ uid: req.user._id }).sort({ created: -1 }).exec(function (err, invoices) {
             if (err || invoices.length == 0) {
                 self.view.invoices = [];
             } else {
                 self.view.invoices = invoices;
             }
 
-            AccService.billing(subscription, req.user, function (err, plan, used) {
+            AccService.billing(req.user, function (err, used) {
                 if (err) {
                     return next(new Error("Internal Server Error"));
                 }
 
-                self.view.plan = plan;
+                self.view.plan = {};
                 self.view.used = used;
                 next(null);
             });

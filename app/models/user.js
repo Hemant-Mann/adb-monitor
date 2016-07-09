@@ -33,6 +33,10 @@ var UserSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    credits: {
+        type: Number,
+        required: true
+    },
     admin: Boolean,
     live: {
         type: Boolean,

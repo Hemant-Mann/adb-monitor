@@ -3,58 +3,29 @@ var User = require('../models/user');
 var Mail = require('../scripts/mail');
 var Utils = require('../scripts/util');
 var mailConfig = require('../config/mail');
-var Subscription = require('../models/subscription');
-var Plan = require('../models/plan');
 var Invoice = require('../models/invoice');
 
 var Auth = {
-	register: function (user, planName, cb) {
+	register: function (user, cb) {
 		var self = this;
 		User.findOne({ email: user.email }, function (err, u) {
 			if (err || u) {
 				return cb({ message: "Email already exists!!" });
 			}
 
+			user.credits = 10000;
 			user.save(function (err) {
-				if (err) {
-					return cb(err);
-				}
-
-				// Save a subscription an create an invoice on registration
-				var regex = new RegExp('^' + planName + '$', "i");
-				Plan.findOne({ name: regex }, function (err, plan) {
-					if (err || !plan) {
-						user.remove();
-						return cb(new Error("Invalid Request"));
-					}
-
-					var start = new Date(); start.setHours(0, 0, 0, 0);
-					var end = new Date(); end.setDate(end.getDate() + plan.period);
-					end.setHours(23, 59, 59, 999);
-
-					var sub = new Subscription({
-						uid: user._id,
-						plan: plan._id,
-						start: start,
-						end: end
-					});
-
-					var invoice = new Invoice({
-						uid: user._id,
-						plan: plan._id,
-						amount: plan.price,
-						payid: "PAYPAL_ID"
-					});
-					if (plan.name.toLowerCase() == 'free' || plan.price == 0) {
-						sub.live = true;
-						invoice.live = true;
-					}
-
-					sub.save();
-					invoice.save();
-
-					self._register(user, cb);
+				if (err) return cb(err);
+				
+				var invoice = new Invoice({
+					uid: user._id,
+					amount: 0,
+					payid: "PAYPAL_ID",
+					live: true
 				});
+				invoice.save();
+
+				self._register(user, cb);
 			});
 		});
 	},

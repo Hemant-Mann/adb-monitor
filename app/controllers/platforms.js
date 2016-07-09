@@ -22,7 +22,7 @@ var Platforms = (function () {
     p.defaultLayout = "layouts/client"; // change the layout
 
     /**
-     * Overriding parent method, checking subscription before using platform
+     * Overriding parent method
      * @param  {Object} req Express Request Object
      * @return {Boolean} True if authenticated
      */
@@ -30,12 +30,6 @@ var Platforms = (function () {
         var basic = this.parent._secure.call(this, req); // call the parent method for basic authentication
 
         if (!basic) return false;
-
-        var subscription = req.session.subscription;
-        var today = new Date();
-        if (!subscription || !subscription.live || !subscription.end || subscription.end < today) {
-            return res.redirect('/account/billing');
-        }
         return true;
     }
 
@@ -221,7 +215,6 @@ var Platforms = (function () {
             var platform = {
                 whitelist: p.whitelist
             };
-
 
             res.send(cb + "(" + JSON.stringify(platform) + ")");
         });
