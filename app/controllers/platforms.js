@@ -4,6 +4,7 @@ var Utils = require('../scripts/util');
 var Stat = require('../models/stat');
 var Visitor = require('../models/visitor');
 var Tracking = require('./tracking');
+var pService = require('../services/platform');
 
 /**
  * Platforms Controller
@@ -41,37 +42,13 @@ var Platforms = (function () {
         self.view.message = null;
         self.view.platforms = []; self.view.quickStats = {};
 
-        Platform.find({uid: req.user._id}, function (err, platforms) {
-            if (err) return cb(Utils.commonMsg(500));
-
+        pService.quickStats(req.user, function (err, platforms, data) {
             if (platforms.length === 0) {
                 return res.redirect('/platforms/create.html');
             }
             self.view.platforms = platforms;
-
-            var ids = [];
-            platforms.forEach(function (el) {
-                ids.push(el._id);
-            });
-
-            Stat.find({ pid: {$in : ids}}, function (err, stats) {
-                if (err || stats.length == 0) return cb(null);
-
-                var pageviews = 0, allowing = 0, blocking = 0;
-                stats.forEach(function (el) {
-                    allowing += el.allow;
-                    blocking += el.block;
-
-                    pageviews += el.allow + el.block;
-                });
-                self.view.quickStats = {
-                    pageviews: pageviews,
-                    allowing: allowing,
-                    blocking: blocking,
-                    percent: Number((blocking / pageviews) * 100).toFixed(2)
-                }
-                cb(null);
-            });
+            self.view.quickStats = data;
+            cb();
         });
     };
 
@@ -185,39 +162,12 @@ var Platforms = (function () {
      * to the request object acting as a middleware for the all the routes with param :id
      */
     p._find = function (req, res, next) {
-        if (!req.user) {
-            return res.redirect('/auth/login');
-        }
-        Platform.findOne({ _id: Utils.parseParam(req.params.id), uid: req.user._id }, function (err, platform) {
-            if (err || !platform) {
-                var err = new Error("Platform not found");
-                err.type = "json"; err.status = 400;
-                return next(err);
-            }
-
-            req.platform = platform;
-            next();
-        });
+        pService.find(req, res, next);
     };
 
     p.api = function (req, res, next) {
-        var cb = req.query.callback;
-        if (!req.params.pid || !cb) return next(new Error("Invalid Request"));
         this._noview();
-
-        Platform.findOne({ _id: Utils.parseParam(req.params.pid) }, function (err, p) {
-            if (err || !p) {
-                var err = new Error("Invalid Request");
-                err.status = 400;
-                return next(err);
-            }
-
-            var platform = {
-                whitelist: p.whitelist
-            };
-
-            res.send(cb + "(" + JSON.stringify(platform) + ")");
-        });
+        pService.api(req, res, next);
     };
 
     p.__class = controller.name.toLowerCase();
