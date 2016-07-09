@@ -15,7 +15,13 @@ var app = express();
 app.set('views', path.join(__dirname, '/app/views'));
 app.set('view cache', false);
 app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), {
+    maxAge: 0,
+    etag: false,
+    setHeaders: function (res, path) {
+        res.setHeader('Cache-Control', 'no-cache, max-age=0')
+    }
+}));
 
 var routes = require('./app/routes/index'),
   mongoose = require('mongoose'),

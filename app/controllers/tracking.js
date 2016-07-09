@@ -67,7 +67,8 @@ var Tracking = {
             device = 'mobile';
         }
         // Check Visitor
-        Visitor.process({ cookie: params.ckid, pid: opts.pid, device: device }, function (err) {
+        var whitelist = params.wh || false;
+        Visitor.process({ cookie: params.ckid, pid: opts.pid, device: device }, whitelist, function (err) {
             if (err) return false;
 
             var query = { pid: opts.pid, browser: browser, device: device };

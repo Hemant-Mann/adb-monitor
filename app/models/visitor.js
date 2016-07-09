@@ -11,6 +11,10 @@ var visitSchema = new Schema({
     cookie: {
         type: String
     },
+    whitelist: {
+        status: Boolean,
+        time: Date
+    },
     total: {
         type: Number,
         default: 0
@@ -26,7 +30,7 @@ visitSchema.index({ pid: 1, cookie: 1, device: 1 });
 visitSchema.index({ pid: 1, device: 1, modified: 1 });
 visitSchema.index({ pid: 1, modified: 1 });
 
-visitSchema.statics.process = function (opts, cb) {
+visitSchema.statics.process = function (opts, whitelist, cb) {
 	var self = this;
     var start = new Date(); start.setHours(0, 0, 0, 0);
     var end = new Date(); end.setHours(23, 59, 59, 999);
@@ -41,6 +45,13 @@ visitSchema.statics.process = function (opts, cb) {
 
         visitor.total += 1;
         visitor.modified = Date.now();
+
+        if (whitelist) {
+            visitor.whitelist.status = true;
+            visitor.whitelist.time = Date.now();
+        } else {
+            visitor.whitelist.status = false;
+        }
         visitor.save();
         cb(false);
 	});
