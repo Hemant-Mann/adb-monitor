@@ -36,6 +36,7 @@ var invSchema = new Schema({
 }, { collection: 'invoices' });
 
 invSchema.index({ _id: 1, live: 1 });
+invSchema.index({ uid: 1 });
 
 // pre + post middleware of Mongoose schema
 invSchema.pre('save', function (next) {

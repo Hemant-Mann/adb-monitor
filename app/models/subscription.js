@@ -30,6 +30,7 @@ var subSchema = new Schema({
 }, { collection: 'subscriptions' });
 
 subSchema.index({ _id: 1, live: 1 });
+subSchema.index({ uid: 1 });
 
 // pre + post middleware of Mongoose schema
 subSchema.pre('save', function (next) {

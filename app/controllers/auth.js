@@ -90,9 +90,7 @@ var Auth = (function () {
                     }
 
                     Subscription.findOne({ uid: user._id }, function (err, s) {
-                        if (!err) {
-                            req.session.subscription = s || {};
-                        }
+                        req.session.subscription = s || {};
                         if (!s.live) {
                             url = '/account/billing';
                         }

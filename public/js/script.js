@@ -63,6 +63,23 @@ $(document).ready(function() {
         });
     });
 
+    $('.refreshPage').on('click', function (e) {
+        e.preventDefault();
+
+        var self = $(this);
+        var searchQuery = window.location.search;
+        var dest = window.location.pathname + searchQuery;
+        var send = self.data('send');
+
+        if (!searchQuery) {
+            dest += '?';
+        } else {
+            dest += '&';
+        }
+        dest += $.param(send);
+        window.location.href = dest;
+    });
+
     $('#dateRangeStats').on('submit', function (e) {
         /*e.preventDefault();
 

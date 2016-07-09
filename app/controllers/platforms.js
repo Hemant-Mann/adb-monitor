@@ -51,7 +51,7 @@ var Platforms = (function () {
             if (err) return cb(Utils.commonMsg(500));
 
             if (platforms.length === 0) {
-                return cb({ message: "No Platforms found!! <a href='/platforms/create'>Add Now</a>" });
+                return res.redirect('/platforms/create.html');
             }
             self.view.platforms = platforms;
 

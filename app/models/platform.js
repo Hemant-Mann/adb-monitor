@@ -35,6 +35,7 @@ var platformSchema = new Schema({
 
 platformSchema.index({ _id: 1, live: 1 });
 platformSchema.index({ uid: 1, live: 1 });
+platformSchema.index({ uid: 1 });
 platformSchema.index({ uid: 1, domain: 1 });
 
 platformSchema.statics.parseDomain = function (value) {
