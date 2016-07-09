@@ -25,7 +25,7 @@ var invSchema = new Schema({
         required: true
     },
     created: {
-        type: Number,
+        type: Date,
         required: true,
         default: Date.now
     },

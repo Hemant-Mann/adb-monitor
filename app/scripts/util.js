@@ -112,6 +112,9 @@ var utils = {
         var o = {}, prop;
 
         for (prop in obj) {
+            // if (obj.hasOwnProperty(prop)) {
+            //     o[prop] = obj[prop];
+            // }
             o[prop] = obj[prop];
         }
         return o;

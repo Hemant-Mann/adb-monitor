@@ -2,28 +2,28 @@
     <div class="col-sm-6 col-lg-3">
         <div class="widget-simple-chart text-center card-box">
             <p class="text-muted text-nowrap">Plan</p>
-            <h3 class="text-primary counter">Trial</h3>
+            <h3 class="text-primary counter"><%= plan.name %></h3>
         </div>
     </div>
 
     <div class="col-sm-6 col-lg-3">
         <div class="widget-simple-chart text-center card-box">
             <p class="text-muted text-nowrap">Price</p>
-            <h3 class="text-primary counter">FREE</h3>
+            <h3 class="text-primary counter"><%= plan.price %> <%= plan.currency %></h3>
         </div>
     </div>
 
     <div class="col-sm-6 col-lg-3">
         <div class="widget-simple-chart text-center card-box">
             <p class="text-muted text-nowrap">Visitor Used</p>
-            <h3 class="text-primary counter">100</h3>
+            <h3 class="text-primary counter"><%= used %></h3>
         </div>
     </div>
 
     <div class="col-sm-6 col-lg-3">
         <div class="widget-simple-chart text-center card-box">
             <p class="text-muted text-nowrap">Visitor Limit</p>
-            <h3 class="text-primary counter">50000</h3>
+            <h3 class="text-primary counter"><%= plan.visitors %></h3>
         </div>
     </div>
 </div>

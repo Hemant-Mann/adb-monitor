@@ -1,10 +1,10 @@
 var Shared = require('./controller');
 var User = require('../models/user');
 var Invoice = require('../models/invoice');
-var Plan = require('../models/plan');
 
 var Utils = require('../scripts/util');
 var mail = require('../config/mail');
+var AccService = require('../services/account');
 
 /**
  * Account Controller
@@ -80,8 +80,16 @@ var Account = (function () {
             } else {
                 self.view.invoices = invoices;
             }
-            
-            return next(null);
+
+            AccService.billing(subscription, req.user, function (err, plan, used) {
+                if (err) {
+                    return next(new Error("Internal Server Error"));
+                }
+
+                self.view.plan = plan;
+                self.view.used = used;
+                next(null);
+            });
         });
     };
 

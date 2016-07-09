@@ -38,7 +38,6 @@ var Auth = {
 						start: start,
 						end: end
 					});
-					sub.save();
 
 					var invoice = new Invoice({
 						uid: user._id,
@@ -46,6 +45,12 @@ var Auth = {
 						amount: plan.price,
 						payid: "PAYPAL_ID"
 					});
+					if (plan.name.toLowerCase() == 'free' || plan.price == 0) {
+						sub.live = true;
+						invoice.live = true;
+					}
+
+					sub.save();
 					invoice.save();
 
 					self._register(user, cb);

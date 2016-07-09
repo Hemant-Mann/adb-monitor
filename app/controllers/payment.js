@@ -113,7 +113,8 @@ var Payment = (function () {
 
                 Subscription.update({ _id: subscription._id }, {$set: {
                     start: start,
-                    end: end
+                    end: end,
+                    live: true
                 }}, function (err) {
 
                 });
