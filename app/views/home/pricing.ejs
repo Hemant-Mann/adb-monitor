@@ -12,91 +12,96 @@
             <div class="col-lg-10 col-lg-offset-1">
                 <div class="row">
                     <!-- Pricing Item -->
-                    <div class="col-sm-4 col-md-4 col-lg-4">
-                        <div class="pricing-item animated fadeInLeft wow" data-wow-delay=".3s">
-                            <div class="pricing-item-inner">
-                                <div class="pricing-wrap">
-                                    <div class="pricing-num pricing-num-pink"><sup>$</sup>10</div>
-                                    <!-- Pricing Title -->
-                                    <div class="pricing-title">
-                                        Basic
-                                    </div>
-                                    <!-- Pricing Features -->
-                                    <div class="pricing-features">
-                                        <ul class="sf-list pr-list">
-                                            <li>50,000 Visitors</li>
-                                            <li>Unlimited pageviews</li>
-                                            <li>Free Support</li>
-                                        </ul>
-                                    </div>
-                                    <!-- Button -->
-                                    <div class="pr-button">
-                                        <a href="#" class="btn btn-primary btn-rnd">Buy Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- End Pricing Item -->
-                    <!-- Pricing Item -->
-                    <div class="col-sm-4 col-md-4 col-lg-4">
-                        <div class="pricing-item main animated fadeInLeft wow" data-wow-delay=".5s">
-                            <div class="ribbon">
-                                <span>POPULAR</span>
-                            </div>
-                            <div class="pricing-item-inner">
-                                <div class="pricing-wrap">
-                                    <div class="pricing-num"><sup>$</sup>20</div>
-                                    <!-- Pricing Title -->
-                                    <div class="pricing-title">
-                                        Plus
-                                    </div>
-                                    <!-- Pricing Features -->
-                                    <div class="pricing-features">
-                                        <ul class="sf-list pr-list">
-                                            <li>100,000 Visitors</li>
-                                            <li>Unlimited pageviews</li>
-                                            <li>Free Support</li>
-                                        </ul>
-                                    </div>
-                                    <!-- Button -->
-                                    <div class="pr-button">
-                                        <a href="#" class="btn btn-primary btn-rnd">Buy Now</a>
+                    <form action="/account/billing" method="POST">
+                        <div class="col-sm-4 col-md-4 col-lg-4">
+                            <div class="pricing-item animated fadeInLeft wow" data-wow-delay=".3s">
+                                <div class="pricing-item-inner">
+                                    <div class="pricing-wrap">
+                                        <div class="pricing-num pricing-num-pink"><sup>$</sup>10</div>
+                                        <!-- Pricing Title -->
+                                        <div class="pricing-title">
+                                            Basic
+                                        </div>
+                                        <!-- Pricing Features -->
+                                        <div class="pricing-features">
+                                            <ul class="sf-list pr-list">
+                                                <li>50,000 Visitors</li>
+                                                <li>Unlimited pageviews</li>
+                                                <li>Free Support</li>
+                                            </ul>
+                                        </div>
+                                        <!-- Button -->
+                                        <div class="pr-button">
+                                            <input type="hidden" name="visitors" value="50000">
+                                            <button type="submit" class="btn btn-primary btn-rnd">Buy Now</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- End Pricing Item -->
-                    <!-- Pricing Item -->
-                    <div class="col-sm-4 col-md-4 col-lg-4">
-                        <div class="pricing-item animated fadeInLeft wow" data-wow-delay=".7s">
-                            <div class="pricing-item-inner">
-                                <div class="pricing-wrap">
-                                    <div class="pricing-num pricing-num-yellow">
-                                        <sup>$</sup>50
-                                    </div>
-                                    <!-- Pricing Title -->
-                                    <div class="pricing-title">
-                                        Premium
-                                    </div>
-                                    <!-- Pricing Features -->
-                                    <div class="pricing-features">
-                                        <ul class="sf-list pr-list">
-                                            <li>250,000 Visitors</li>
-                                            <li>Unlimited pageviews</li>
-                                            <li>Free Support</li>
-                                        </ul>
-                                    </div>
-                                    <!-- Button -->
-                                    <div class="pr-button">
-                                        <a href="#" class="btn btn-primary btn-rnd">Buy Now</a>
+                    </form>
+
+                    <form action="/account/billing" method="POST">
+                        <div class="col-sm-4 col-md-4 col-lg-4">
+                            <div class="pricing-item main animated fadeInLeft wow" data-wow-delay=".5s">
+                                <div class="ribbon">
+                                    <span>POPULAR</span>
+                                </div>
+                                <div class="pricing-item-inner">
+                                    <div class="pricing-wrap">
+                                        <div class="pricing-num"><sup>$</sup>20</div>
+                                        <!-- Pricing Title -->
+                                        <div class="pricing-title">
+                                            Plus
+                                        </div>
+                                        <!-- Pricing Features -->
+                                        <div class="pricing-features">
+                                            <ul class="sf-list pr-list">
+                                                <li>100,000 Visitors</li>
+                                                <li>Unlimited pageviews</li>
+                                                <li>Free Support</li>
+                                            </ul>
+                                        </div>
+                                        <!-- Button -->
+                                        <div class="pr-button">
+                                            <input type="hidden" name="visitors" value="100000">
+                                            <button type="submit" class="btn btn-primary btn-rnd">Buy Now</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                     <!-- End Pricing Item -->
+                    <form action="/account/billing" method="POST">
+                        <div class="col-sm-4 col-md-4 col-lg-4">
+                            <div class="pricing-item animated fadeInLeft wow" data-wow-delay=".7s">
+                                <div class="pricing-item-inner">
+                                    <div class="pricing-wrap">
+                                        <div class="pricing-num pricing-num-yellow">
+                                            <sup>$</sup>50
+                                        </div>
+                                        <!-- Pricing Title -->
+                                        <div class="pricing-title">
+                                            Premium
+                                        </div>
+                                        <!-- Pricing Features -->
+                                        <div class="pricing-features">
+                                            <ul class="sf-list pr-list">
+                                                <li>250,000 Visitors</li>
+                                                <li>Unlimited pageviews</li>
+                                                <li>Free Support</li>
+                                            </ul>
+                                        </div>
+                                        <div class="pr-button">
+                                            <input type="hidden" name="visitors" value="250000">
+                                            <button href="#" class="btn btn-primary btn-rnd">Buy Now</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

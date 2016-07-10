@@ -33,10 +33,10 @@ var Payment = (function () {
                 },
                 "transactions": [{
                     "amount": {
-                        "total": "1.00",
-                        "currency": "USD"
+                        "total": inv.amount,
+                        "currency": inv.currency
                     },
-                    "description": "Buy 10,000 visitors"
+                    "description": "Buy " + inv.visitors +" visitors"
                 }]
             };
 
@@ -59,7 +59,7 @@ var Payment = (function () {
                 if (pay.payer.payment_method === 'paypal') {
                     req.session.paymentInfo = {
                         id: pay.id,
-                        amount: 50 // here add amount of transaction
+                        amount: invoice.amount
                     };
 
                     var redirectUrl, link, i;
@@ -83,9 +83,9 @@ var Payment = (function () {
 
         var paymentInfo = req.session.paymentInfo || {},
             paymentId = paymentInfo.id,
-            payerId = req.param('PayerID'),
-            details = { "payer_id": payerId },
-            invoice = req.session.invoice;
+            details = { "payer_id": req.param('PayerID') },
+            invoice = req.session.invoice,
+            user = req.user;
 
         paypal.payment.execute(paymentId, details, function (err, payment) {
             if (err) {
@@ -96,6 +96,12 @@ var Payment = (function () {
             invoice.payid = paymentId;
             invoice.live = true;
             invoice.save();
+
+            if (!user.credits) {
+                user.credits = 0;
+            }
+            user.credits += Number(invoice.visitors);
+            user.save();
 
             delete req.session.invoice;
             delete req.session.paymentInfo;

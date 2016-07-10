@@ -35,7 +35,8 @@ var UserSchema = new Schema({
     },
     credits: {
         type: Number,
-        required: true
+        required: true,
+        default: 0
     },
     admin: Boolean,
     live: {
@@ -62,6 +63,8 @@ UserSchema.pre('save', function (next) {
     if (self.password) {
         self.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
         self.password = self.hashPassword(self.password);
+
+        self.modified = Date.now();
         next();
     } else {
         next(new Error("Password is required"));

@@ -9,7 +9,7 @@
     <div class="col-sm-6 col-lg-3">
         <div class="widget-simple-chart text-center card-box">
             <p class="text-muted text-nowrap">Visitor Limit</p>
-            <h3 class="text-primary counter">10,000</h3>
+            <h3 class="text-primary counter"><%= user.credits %></h3>
         </div>
     </div>
 
@@ -40,6 +40,7 @@
                             <th>Date</th>
                             <th>Method</th>
                             <th>Amount</th>
+                            <th>Visitors</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -49,7 +50,8 @@
                         <tr>
                             <td><%= invoices[i].created %></td>
                             <td>Paypal <small>(<%= invoices[i].payid %>)</small></td>
-                            <td><%= invoices[i].amount %></td>
+                            <td><%= invoices[i].amount %> <%= invoices[i].currency %></td>
+                            <td><%= invoices[i].visitors %></td>
                             <td>
                                 <% if (invoices[i].live) { %>
                                 <span class="label label-success">Paid</span>

@@ -10,7 +10,7 @@ router.get(regex, function (req, res, next) {
 	Account._init(req, res, next)
 });
 
-regex = Utils.makeRegex(['settings'], ['html', 'json']);
+regex = Utils.makeRegex(['settings', 'billing'], ['html', 'json']);
 router.post(regex, function (req, res, next) {
 	Account._init(req, res, next);
 });

@@ -19,7 +19,8 @@ var Auth = {
 				
 				var invoice = new Invoice({
 					uid: user._id,
-					amount: 0,
+					amount: "0.00",
+					visitors: 10000,
 					payid: "PAYPAL_ID",
 					live: true
 				});

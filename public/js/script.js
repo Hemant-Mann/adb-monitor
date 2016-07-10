@@ -63,20 +63,36 @@ $(document).ready(function() {
         });
     });
 
+    /**
+     * Refresh the page with the new query data being send by the element
+     * but also preserving any query parameters already present on page
+     * Element's key=value pair will over ride those present in URL
+     */
     $('.refreshPage').on('click', function (e) {
         e.preventDefault();
 
         var self = $(this);
         var searchQuery = window.location.search;
-        var dest = window.location.pathname + searchQuery;
+        var dest = window.location.pathname;
         var send = self.data('send');
+        var obj = {};
 
-        if (!searchQuery) {
-            dest += '?';
-        } else {
-            dest += '&';
+        if (searchQuery) {
+            var sp = searchQuery.split('&') || [];
+            sp.forEach(function (el) {
+                var pair = el.split('=');
+                pair[0] = pair[0].replace(/^\?/, '');
+
+                obj[pair[0]] = pair[1];
+            });
         }
-        dest += $.param(send);
+
+        for (var prop in send) {
+            obj[prop] = send[prop];
+        }
+
+        dest += '?';
+        dest += $.param(obj);
         window.location.href = dest;
     });
 

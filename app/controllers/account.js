@@ -72,23 +72,39 @@ var Account = (function () {
     a.billing = function (req, res, next) {
         var self = this;
 
-        Invoice.find({ uid: req.user._id }).sort({ created: -1 }).exec(function (err, invoices) {
-            if (err || invoices.length == 0) {
-                self.view.invoices = [];
-            } else {
-                self.view.invoices = invoices;
-            }
+        if (req.method == 'POST') { // user wants to buy more credits
+            // we will create a new invoice for him and send him for payment
+            var data = Invoice.calculate(req.body.visitors);
+            var inv = new Invoice({
+                uid: req.user._id,
+                visitors: data.visitors,
+                amount: data.price,
+                currency: 'USD',
+                payid: 'PAYPAL_ID'
+            });
+            inv.save(function (err) {
+                if (err) return next(Utils.commonMsg(500));
 
-            AccService.billing(req.user, function (err, used) {
-                if (err) {
-                    return next(new Error("Internal Server Error"));
+                return res.redirect('/payment/create/' + inv._id);
+            });
+        } else{
+            Invoice.find({ uid: req.user._id }).sort({ created: -1 }).exec(function (err, invoices) {
+                if (err || invoices.length == 0) {
+                    self.view.invoices = [];
+                } else {
+                    self.view.invoices = invoices;
                 }
 
-                self.view.plan = {};
-                self.view.used = used;
-                next(null);
+                AccService.billing(req.user, function (err, used) {
+                    if (err) {
+                        return next(new Error("Internal Server Error"));
+                    }
+
+                    self.view.used = used;
+                    next(null);
+                });
             });
-        });
+        }
     };
 
     a.__class = controller.name.toLowerCase();
