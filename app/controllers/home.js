@@ -27,6 +27,10 @@ var Home = (function () {
     h.support = function (req, res, cb) {
         cb(null);
     };
+
+    h.pricing = function (req, res, cb) {
+        cb(null);
+    };
     
     h.contact = function (req, res, cb) {
         this._noview();

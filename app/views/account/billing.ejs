@@ -1,20 +1,6 @@
 <div class="row">
     <div class="col-sm-6 col-lg-3">
         <div class="widget-simple-chart text-center card-box">
-            <p class="text-muted text-nowrap">Plan</p>
-            <h3 class="text-primary counter"><%= plan.name %></h3>
-        </div>
-    </div>
-
-    <div class="col-sm-6 col-lg-3">
-        <div class="widget-simple-chart text-center card-box">
-            <p class="text-muted text-nowrap">Price</p>
-            <h3 class="text-primary counter"><%= plan.price %> <%= plan.currency %></h3>
-        </div>
-    </div>
-
-    <div class="col-sm-6 col-lg-3">
-        <div class="widget-simple-chart text-center card-box">
             <p class="text-muted text-nowrap">Visitor Used</p>
             <h3 class="text-primary counter"><%= used %></h3>
         </div>
@@ -23,7 +9,21 @@
     <div class="col-sm-6 col-lg-3">
         <div class="widget-simple-chart text-center card-box">
             <p class="text-muted text-nowrap">Visitor Limit</p>
-            <h3 class="text-primary counter"><%= plan.visitors %></h3>
+            <h3 class="text-primary counter">10,000</h3>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="widget-simple-chart text-center card-box">
+            <p class="text-muted text-nowrap">Price</p>
+            <h3 class="text-primary counter">$1 per 10,000 visitors</h3>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="widget-simple-chart text-center card-box">
+            <p class="text-muted text-nowrap">Extend Visitors</p>
+            <a href="/pricing.html" class="btn btn-primary btn-rounded w-lg animated fadeInDown">Buy More</a>
         </div>
     </div>
 </div>
