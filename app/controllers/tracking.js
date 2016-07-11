@@ -29,14 +29,14 @@ var Tracking = {
         if (!referer || !referer.match(hostRegex)) return cb(false);
 
         // find the platform for the ID sent to the server
-        Platform.findOne({ _id: opts.pid, live: true }, function (err, platform) {
+        Platform.findOne({ _id: opts.pid, live: true }, 'domain uid _id', function (err, platform) {
             if (err || !platform) return cb(false);
 
             // Check if the platform is executing on the provided domain
             if (platform.domain !== host) return cb(false);
 
             // Check if user account is not blocked
-            User.findOne({ _id: platform.uid, live: true }, function (err, user) {
+            User.findOne({ _id: platform.uid, live: true }, '_id', function (err, user) {
                 if (!user) return cb(false);
 
                 cb(true, { pid: platform._id });
@@ -87,7 +87,7 @@ var Tracking = {
         if (device) {
             query.device = device.toLowerCase();
         }
-        Stat.find(query, function (err, stats) {            
+        Stat.find(query, 'allow block device created', function (err, stats) {            
             if (err || !stats || stats.length === 0) {
                 return cb({ stats: {}, total: total });
             }
@@ -114,9 +114,9 @@ var Tracking = {
             } else {
                 query = { pid: pid, modified: created };
             }
-            Visitor.find(query, function (err, v) {
+            Visitor.count(query, function (err, c) {
                 if (err) return cb({ stats: {}, total: total });
-                total.visitors = v.length;
+                total.visitors = c;
 
                 return cb({ stats: s, total: total });
             });

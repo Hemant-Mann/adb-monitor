@@ -6,7 +6,7 @@ var Account = {
 	billing: function (user, cb) {
 		var self = this;
 
-        Platform.find({ uid: user._id }, function (err, platforms) {
+        Platform.find({ uid: user._id }, '_id', function (err, platforms) {
             if (err) return cb(err);
 
             var ids = [];

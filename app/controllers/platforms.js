@@ -104,7 +104,7 @@ var Platforms = (function () {
         this._jsonView();
 
         var c = req.platform;
-        Stat.find({ pid: c._id }, function (err, stats) {
+        Stat.find({ pid: c._id }, '_id', function (err, stats) {
             if (err) return cb(Utils.commonMsg(500));
 
             if (stats.length > 0) {
@@ -130,7 +130,7 @@ var Platforms = (function () {
             platform.uid = req.user._id;
             platform.live = true;
 
-            Platform.findOne({ uid: platform.uid, domain: Platform.parseDomain(platform.domain) }, function (err, c) {
+            Platform.findOne({ uid: platform.uid, domain: Platform.parseDomain(platform.domain) }, '_id', function (err, c) {
                 if (err) return cb(Utils.commonMsg(500));
 
                 if (c) return cb({ message: "Platform already exists!!" });

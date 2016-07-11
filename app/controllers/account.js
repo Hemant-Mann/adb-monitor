@@ -88,7 +88,7 @@ var Account = (function () {
                 return res.redirect('/payment/create/' + inv._id);
             });
         } else{
-            Invoice.find({ uid: req.user._id }).sort({ created: -1 }).exec(function (err, invoices) {
+            Invoice.find({ uid: req.user._id }).select('_id visitors amount payid live created currency').sort({ created: -1 }).exec(function (err, invoices) {
                 if (err || invoices.length == 0) {
                     self.view.invoices = [];
                 } else {
