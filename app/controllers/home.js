@@ -33,8 +33,7 @@ var Home = (function () {
     };
     
     h.contact = function (req, res, cb) {
-        this._noview();
-        res.send('contact function');
+        cb(null);
     };
     
     h.privacy = function (req, res, cb) {
