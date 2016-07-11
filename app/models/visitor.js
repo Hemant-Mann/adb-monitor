@@ -8,6 +8,7 @@ var visitSchema = new Schema({
         required: true
     },
     device: String,
+    country: String,
     cookie: {
         type: String
     },
@@ -30,7 +31,7 @@ visitSchema.index({ pid: 1, cookie: 1, device: 1 });
 visitSchema.index({ pid: 1, device: 1, modified: 1 });
 visitSchema.index({ pid: 1, modified: 1 });
 
-visitSchema.statics.process = function (opts, whitelist, cb) {
+visitSchema.statics.process = function (opts, extra, cb) {
 	var self = this;
     var start = new Date(); start.setHours(0, 0, 0, 0);
     var end = new Date(); end.setHours(23, 59, 59, 999);
@@ -43,10 +44,14 @@ visitSchema.statics.process = function (opts, whitelist, cb) {
             visitor.total = 0;
 		}
 
+        if (!visitor.country) {
+            visitor.country = extra.country;
+        }
+
         visitor.total += 1;
         visitor.modified = Date.now();
 
-        if (whitelist) {
+        if (extra.whitelist) {
             visitor.whitelist.status = true;
             visitor.whitelist.time = Date.now();
         } else {

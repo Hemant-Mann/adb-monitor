@@ -161,6 +161,11 @@ var utils = {
         if (mm < 10) mm = '0' + mm;
         today = yyyy + '-' + mm + '-' + dd;
         return today;
+    },
+    findCountry: function (req) {
+        var country = "IN";
+
+        return req.headers['cf-ipcountry'] || country;
     }
 };
 

@@ -70,7 +70,7 @@ var Tracking = {
         }
         // Check Visitor
         var whitelist = params.wh || false;
-        Visitor.process({ cookie: params.ckid, pid: opts.pid, device: device }, whitelist, function (err) {
+        Visitor.process({ cookie: params.ckid, pid: opts.pid, device: device }, {whitelist: whitelist, country : Utils.findCountry(req) }, function (err) {
             if (err) return false;
 
             var query = { pid: opts.pid, browser: browser, device: device };
