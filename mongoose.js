@@ -1,10 +1,10 @@
 var mongoose = require('mongoose');
 var config = require('./config');
 
-module.exports = function () {
+module.exports = function (env) {
     var folder = './app/models/', dbURI;
 
-    if (process.env.NODE_ENV === 'production') {
+    if (env === 'production') {
         dbURI = 'mongodb://' + config.user + ':' + config.pass + config.dburl + '/' + config.db;
     } else {
         dbURI = 'mongodb://localhost:27017/' + config.db;

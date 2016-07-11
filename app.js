@@ -10,6 +10,7 @@ var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 
 var app = express();
+var env = process.env.NODE_ENV || 'development';
 
 // view engine setup
 app.set('views', path.join(__dirname, '/app/views'));
@@ -26,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
 var routes = require('./app/routes/index'),
   mongoose = require('mongoose'),
   config = require('./config'),
-  db = require('./mongoose')();
+  db = require('./mongoose')(env);
 
 // Routes
 var authRoutes = require('./app/routes/auth'),
@@ -77,7 +78,6 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-var env = process.env.NODE_ENV || 'development';
 if (env === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);

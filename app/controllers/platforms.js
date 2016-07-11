@@ -48,7 +48,8 @@ var Platforms = (function () {
             }
             self.view.platforms = platforms;
             self.view.quickStats = data;
-            cb();
+
+            return cb(null);
         });
     };
 

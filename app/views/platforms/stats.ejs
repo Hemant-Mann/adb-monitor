@@ -1,13 +1,13 @@
 <div class="row">
     <div class="col-sm-6">
         <a href="/platforms/<%= platform._id %>.html" class="btn btn-default bold">All</a>
-        <a href="/platforms/<%= platform._id %>.html?device=desktop" class="btn btn-default bold" data-send='{"device": "desktop"}'>
+        <a href="/platforms/<%= platform._id %>.html?device=desktop" class="btn refreshPage btn-default bold" data-send='{"device": "desktop"}'>
             <i class="fa fa-desktop"></i>&nbsp; Desktop
         </a>
-        <a href="/platforms/<%= platform._id %>?device=tablet" class="btn btn-default bold" data-send='{"device": "tablet"}'>
+        <a href="/platforms/<%= platform._id %>?device=tablet" class="btn refreshPage btn-default bold" data-send='{"device": "tablet"}'>
             <i class="fa fa-tablet"></i>&nbsp; Tablet
         </a>
-        <a href="/platforms/<%= platform._id %>?device=mobile" class="btn btn-default bold" data-send='{"device": "mobile"}'>
+        <a href="/platforms/<%= platform._id %>?device=mobile" class="btn refreshPage btn-default bold" data-send='{"device": "mobile"}'>
             <i class="fa fa-mobile"></i>&nbsp; Mobile
         </a>
     </div>
