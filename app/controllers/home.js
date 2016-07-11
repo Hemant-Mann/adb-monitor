@@ -37,8 +37,11 @@ var Home = (function () {
     };
     
     h.privacy = function (req, res, cb) {
-        this._noview();
-        res.send('privacy function');
+        cb(null);
+    };
+
+    h.terms = function (req, res, cb) {
+        cb(null);
     };
 
     h.__class = controller.name.toLowerCase();

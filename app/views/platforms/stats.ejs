@@ -1,29 +1,29 @@
 <div class="row">
     <div class="col-sm-6">
-        <a href="/platforms/<%= platform._id %>.html" class="btn btn-teal bold">All</a>
-        <a href="/platforms/<%= platform._id %>.html?device=desktop" class="btn btn-default bold refreshPage" data-send='{"device": "desktop"}'>
+        <a href="/platforms/<%= platform._id %>.html" class="btn btn-default bold">All</a>
+        <a href="/platforms/<%= platform._id %>.html?device=desktop" class="btn btn-default bold" data-send='{"device": "desktop"}'>
             <i class="fa fa-desktop"></i>&nbsp; Desktop
         </a>
-        <a href="/platforms/<%= platform._id %>?device=tablet" class="btn btn-default bold refreshPage" data-send='{"device": "tablet"}'>
+        <a href="/platforms/<%= platform._id %>?device=tablet" class="btn btn-default bold" data-send='{"device": "tablet"}'>
             <i class="fa fa-tablet"></i>&nbsp; Tablet
         </a>
-        <a href="/platforms/<%= platform._id %>?device=mobile" class="btn btn-default bold refreshPage" data-send='{"device": "mobile"}'>
+        <a href="/platforms/<%= platform._id %>?device=mobile" class="btn btn-default bold" data-send='{"device": "mobile"}'>
             <i class="fa fa-mobile"></i>&nbsp; Mobile
         </a>
     </div>
     <div class="col-sm-6">
         <div class="text-right-responsive">
-            <form action="" id="dateRangeStats" method="GET">
+            <form action="" id="dateRangeStats" method="GET" class="inline-form">
                 <select class="form-control" name="start">
                     <% var d = new Date(); %>
-                    <option value="<%- today(d) %>">Today</option>
+                    <option value="<%- today(d) %>" selected>Today</option>
                     <% d.setDate(d.getDate() - 1) %>
                     <option value="<%- today(d) %>">Yesterday</option>
                     <% d.setDate(d.getDate() - 6) %>
                     <option value="<%- today(d) %>">Last 7 Days</option>
 
                     <% d = new Date(); d.setMonth((new Date()).getMonth() - 1) %>
-                    <option value="<%- today(d) %>" selected="">Last 30 Days</option>
+                    <option value="<%- today(d) %>">Last 30 Days</option>
                     <% d = new Date(); d.setMonth((new Date()).getMonth() - 2) %>
                     <option value="<%- today(d) %>">Last 60 Days</option>
                     <% d = new Date(); d.setMonth((new Date()).getMonth() - 3) %>
