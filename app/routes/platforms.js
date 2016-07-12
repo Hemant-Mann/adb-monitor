@@ -4,26 +4,18 @@ var router = express.Router();
 var Utils = require('../scripts/util');
 var Platforms = require('../controllers/platforms');
 
-// Platforms Page
-router.get('/', function (req, res, next) {
-	Platforms._init(req, res, next, {method: 'index'});
-});
-
 router.get('/api/:pid', function (req, res, next) {
 	Platforms._init(req, res, next, { method: 'api' });
 });
 
 // Controller - methods
-var regex = Utils.makeRegex(['index', 'getCode', 'quickStats'], ['html', 'json']);
+var regex = Utils.makeRegex(['getCode', 'create'], ['html', 'json']);
 router.get(regex, function (req, res, next) {
 	Platforms._init(req, res, next);
 });
 
-regex = Utils.makeRegex(['create'], ['html']);
-router.get(regex, function (req, res, next) {
-	Platforms._init(req, res, next);
-})
-.post(regex, function (req, res, next) {
+regex = Utils.makeRegex(['create'], ['html', 'json']);
+router.post(regex, function (req, res, next) {
 	Platforms._init(req, res, next);
 });
 

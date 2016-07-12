@@ -18,27 +18,8 @@ var Platforms = (function () {
 
     var p = new controller();
 
-    p.secure = ['index', 'stats', 'update', 'delete', 'create', 'getCode', 'quickStats']; // Add Pages|Methods to this array which needs authentication
+    p.secure = ['stats', 'update', 'delete', 'create', 'getCode']; // Add Pages|Methods to this array which needs authentication
     p.defaultLayout = "layouts/client"; // change the layout
-
-    /**
-     * Default Index function showing all the platforms
-     */
-    p.index = function (req, res, cb) {
-        var self = this;
-        self.view.message = null;
-        self.view.platforms = []; self.view.quickStats = {};
-        Platform.find({ uid: req.user._id }, function (err, p) {
-            if (err) return cb(err);
-
-            if (p.length === 0) {
-                return res.redirect('/platforms/create.html');
-            }
-
-            self.view.platforms = p;
-            cb();
-        });
-    };
 
     /**
      * This function will show the stats of the given platform
@@ -156,16 +137,6 @@ var Platforms = (function () {
     p.api = function (req, res, next) {
         this._noview();
         pService.api(req, res, next);
-    };
-
-    p.quickStats = function (req, res, next) {
-        this._jsonView(); var self = this;
-
-        pService.quickStats(req.user, function (err, data) {
-            self.view.quickStats = data;
-
-            return next(null);
-        });
     };
 
     p.__class = controller.name.toLowerCase();

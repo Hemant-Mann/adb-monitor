@@ -31,7 +31,7 @@ var Auth = (function () {
     a._session = function (req, res, next) {
         var re = new RegExp(a.beforeSession.join('|'));
         if (req.user && req.url.match(re)) {
-            return res.redirect('/platforms/index.html');
+            return res.redirect('/dashboard.html');
         }
         next();
     };
@@ -81,7 +81,7 @@ var Auth = (function () {
                 req.login(user, function(err) {
                     if (err) return cb(err);
 
-                    var url = '/platforms/index.html';
+                    var url = '/dashboard.html';
                     if (req.session.previousPath) {
                         url = req.session.previousPath
                         delete req.session.previousPath;
@@ -109,7 +109,7 @@ var Auth = (function () {
 
             User.update({ _id: meta.pid }, {$set: {live: true}} , function (err) {
                 if (err) return false;
-
+                meta.remove();
                 return cb(Utils.commonMsg(200, "Account verified"));
             });
         });

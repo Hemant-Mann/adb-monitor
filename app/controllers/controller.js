@@ -41,7 +41,7 @@ var Controller = (function () {
                 var err = new Error("Invalid URL"); err.status = 400;
                 return next(err);
             }
-            self.method = method.toLowerCase();
+            self.method = method;
             self.defaultExtension = Utils.getExtension(req.url);
 
             if (self.secure.length > 0 && self.secure.indexOf(self.method) !== -1) {

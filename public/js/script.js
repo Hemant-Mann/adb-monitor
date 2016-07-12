@@ -97,8 +97,8 @@ $(document).ready(function() {
     });
 
     var page = window.location.pathname;
-    if (page.match(/platforms\/index/)) {
-        request.get({ url: 'platforms/quickStats' }, function (err, d) {
+    if (page.match(/\/dashboard(\.html)?$/)) {
+        request.get({ url: 'account/quickStats' }, function (err, d) {
             if (err) return;
 
             var selector = $('.quickStats');

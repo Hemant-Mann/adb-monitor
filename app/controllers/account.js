@@ -1,10 +1,12 @@
 var Shared = require('./controller');
 var User = require('../models/user');
 var Invoice = require('../models/invoice');
+var Platform = require('../models/platform');
 
 var Utils = require('../scripts/util');
 var mail = require('../config/mail');
 var AccService = require('../services/account');
+var pService = require('../services/platform');
 
 /**
  * Account Controller
@@ -19,7 +21,7 @@ var Account = (function () {
 
     var a = new controller();
 
-    a.secure = ['settings', 'billing']; // Add Pages|Methods to this array which needs authentication
+    a.secure = ['settings', 'billing', 'dashboard', 'quickStats']; // Add Pages|Methods to this array which needs authentication
     a.defaultLayout = "layouts/client"; // change the layout
 
     a.settings = function (req, res, cb) {
@@ -105,6 +107,31 @@ var Account = (function () {
                 });
             });
         }
+    };
+
+    a.dashboard = function (req, res, next) {
+        var self = this;
+        self.view.platforms = []; self.view.quickStats = {};
+        Platform.find({ uid: req.user._id }, function (err, p) {
+            if (err) return next(err);
+
+            if (p.length === 0) {
+                return res.redirect('/platforms/create.html');
+            }
+
+            self.view.platforms = p;
+            next();
+        });
+    };
+
+    a.quickStats = function (req, res, next) {
+        this._jsonView(); var self = this;
+
+        pService.quickStats(req.user, function (err, data) {
+            self.view.quickStats = data;
+
+            return next(null);
+        });
     };
 
     a.__class = controller.name.toLowerCase();
