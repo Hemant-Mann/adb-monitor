@@ -24,7 +24,7 @@ var routes = require('./app/routes/index'),
 
 // Routes
 var authRoutes = require('./app/routes/auth'),
-  adminRoutes = require('./app/routes/admin'),
+  websiteRoutes = require('./app/routes/website'),
   platformRoutes = require('./app/routes/platforms');
   accountRoutes = require('./app/routes/account');
   paymentRoutes = require('./app/routes/payment');
@@ -54,7 +54,7 @@ app.use(passport.session());
 
 app.use('/', routes);
 app.use('/auth', authRoutes);
-app.use('/admin', adminRoutes);
+app.use('/website', websiteRoutes);
 app.use('/platforms', platformRoutes);
 app.use('/account', accountRoutes);
 app.use('/payment', paymentRoutes);

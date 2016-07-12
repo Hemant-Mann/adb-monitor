@@ -2,7 +2,6 @@ var Shared = require('./controller');
 var Platform = require('../models/platform');
 var Utils = require('../scripts/util');
 var Stat = require('../models/stat');
-var Tracking = require('./tracking');
 var pService = require('../services/platform');
 
 /**
@@ -18,30 +17,8 @@ var Platforms = (function () {
 
     var p = new controller();
 
-    p.secure = ['stats', 'update', 'delete', 'create', 'getCode']; // Add Pages|Methods to this array which needs authentication
+    p.secure = ['update', 'delete', 'getCode']; // Add Pages|Methods to this array which needs authentication
     p.defaultLayout = "layouts/client"; // change the layout
-
-    /**
-     * This function will show the stats of the given platform
-     */
-    p.stats = function (req, res, cb) {
-        var self = this,
-            dateQuery = Utils.dateQuery(req.query),
-            created = { $gte: dateQuery.start, $lte: dateQuery.end },
-            device = req.query.device || '';
-
-        self.view.device = device;
-
-        self.view.platform = req.platform;
-        self.view.today = Utils.today;
-
-        Tracking.display(req.platform._id, created, device, function (result) {
-            self.view.stats = result.stats;
-            self.view.total = result.total;
-
-            cb(null);
-        });
-    };
 
     /**
      * Updates the given platform
@@ -86,32 +63,6 @@ var Platforms = (function () {
                 return cb(Utils.commonMsg(200, 'Platform was removed'));
             });
         });
-    };
-
-    /**
-     * Creates the platform from the request body
-     */
-    p.create = function (req, res, cb) {
-        this.view.message = null;
-
-        if (req.method === 'POST') {
-            var platform = new Platform(req.body);
-            platform.uid = req.user._id;
-            platform.live = true;
-
-            Platform.findOne({ uid: platform.uid, domain: Platform.parseDomain(platform.domain) }, '_id', function (err, c) {
-                if (err) return cb(Utils.commonMsg(500));
-
-                if (c) return cb({ message: "Platform already exists!!" });
-                platform.save(function (err, p) {
-                    if (err) return cb(Utils.commonMsg(500));
-
-                    cb(Utils.commonMsg(200, 'Platform added'));
-                });
-            });
-        } else {
-            cb(null);
-        }
     };
 
     p.getCode = function (req, res, cb) {

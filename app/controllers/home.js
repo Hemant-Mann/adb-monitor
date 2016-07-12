@@ -1,5 +1,6 @@
 var Shared = require('./controller');
 var email = require('../config/mail').fromEmail;
+var Utils = require('../scripts/util');
 
 /**
  * Home Controller
@@ -7,11 +8,7 @@ var email = require('../config/mail').fromEmail;
 var Home = (function () {
     'use strict';
 
-    var controller = function Home() {}
-    controller.prototype = new Shared;
-    controller.prototype.parent = Shared.prototype;
-
-    var h = new controller();
+    var h = Utils.inherit(Shared, 'Home');
     /**
      * Override parent method, set variables which are common
      * to all the views
@@ -44,7 +41,6 @@ var Home = (function () {
         cb(null);
     };
 
-    h.__class = controller.name.toLowerCase();
     return h;
 }());
 

@@ -166,6 +166,16 @@ var utils = {
         var country = "IN";
 
         return req.headers['cf-ipcountry'] || country;
+    },
+    inherit: function (parent, child) {
+        var func = new Function('return function ' + child + ' () {}');
+        var c = func();
+        c.prototype = new parent;
+        c.prototype.parent = parent.prototype;
+
+        var obj = new c;
+        obj.__class = c.name.toLowerCase();
+        return obj;
     }
 };
 

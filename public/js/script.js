@@ -114,13 +114,18 @@ $(document).ready(function() {
     if ($('#morris-area-chart').length > 0) {
         var start = new Date(); start.setMonth(start.getMonth() - 1);
         var end = new Date(); end.setMonth(end.getMonth() + 1);
+        var pid, search;
 
-        var pid = window.location.pathname.match(/\/platforms\/(\w+)/)[1];
-        var search = window.location.search;
-        search = search.substr(1);
+        try {
+            pid = window.location.pathname.match(/\/website\/stats\/(\w+)/)[1];
+            search = window.location.search;
+            search = search.substr(1);
+        } catch (e) {
+            search = ""; pid = "";
+        }
 
         request.get({
-            url: 'platforms/' + pid,
+            url: 'website/stats/' + pid,
             data: search
         }, function (err, d) {
             if (err) return false;

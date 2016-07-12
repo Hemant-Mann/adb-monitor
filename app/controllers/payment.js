@@ -11,11 +11,7 @@ var Invoice = require('../models/invoice');
 var Payment = (function () {
     'use strict';
 
-    var controller = function Payment() {}
-    controller.prototype = new Shared;
-    controller.prototype.parent = Shared.prototype;
-
-    var p = new controller();
+    var p = Utils.inherit(Shared, 'Payment');
     p.secure = ['create', 'cancel', 'success'];
 
     p._pay = function (invid, cb) {
@@ -114,7 +110,6 @@ var Payment = (function () {
         res.send('payment cancelled');
     };
 
-    p.__class = controller.name.toLowerCase();
     return p;
 }());
 

@@ -12,13 +12,7 @@ var AuthService = require('../services/auth');
 var Auth = (function () {
     'use strict';
 
-    var controller = function Auth() {}
-
-    // inherit Methods|Properties
-    controller.prototype = new Shared;
-    controller.prototype.parent = Shared.prototype;
-    
-    var a = new controller();
+    var a = Utils.inherit(Shared, 'Auth');
     a.defaultLayout = "layouts/client";
     a.beforeSession = ['login', 'register', 'forgotPassword', 'verify'];
 
@@ -120,7 +114,6 @@ var Auth = (function () {
         res.redirect('/');
     };
 
-    a.__class = controller.name.toLowerCase();
     return a;
 }());
 

@@ -6,17 +6,12 @@ var Shared = require('./controller');
 var Admin = (function () {
     'use strict';
 
-    var controller = function Admin() {}
-    controller.prototype = new Shared;
-    controller.prototype.parent = Shared.prototype;
-
-    var a = new controller;
+    var a = Utils.inherit(Shared, 'Admin');
 	a.index = function (req, res, next) {
 		this._noview();
         res.send('Index function');
     };
-
-    a.__class = controller.name.toLowerCase();
+    
     return a;
 }());
 

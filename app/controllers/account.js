@@ -14,12 +14,7 @@ var pService = require('../services/platform');
 var Account = (function () {
     'use strict';
 
-    var controller = function Account() {}
-        // inherit Methods|Properties
-    controller.prototype = new Shared;
-    controller.prototype.parent = Shared.prototype;
-
-    var a = new controller();
+    var a = Utils.inherit(Shared, 'Account');
 
     a.secure = ['settings', 'billing', 'dashboard', 'quickStats']; // Add Pages|Methods to this array which needs authentication
     a.defaultLayout = "layouts/client"; // change the layout
@@ -134,7 +129,6 @@ var Account = (function () {
         });
     };
 
-    a.__class = controller.name.toLowerCase();
     return a;
 }());
 
