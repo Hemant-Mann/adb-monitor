@@ -9,11 +9,10 @@ module.exports = function (env) {
     } else {
         dbURI = 'mongodb://localhost:27017/' + config.db;
     }
-    var db = mongoose.connect(dbURI);
+    var options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
+                replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } };
+    var db = mongoose.connect(dbURI, options);
 
-    require(folder + 'stat');
-    require(folder + 'platform');
-    require(folder + 'visitor');
     require(folder + 'user');
     return db;
 };

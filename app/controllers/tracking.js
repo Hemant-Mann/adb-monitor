@@ -81,7 +81,7 @@ var Tracking = {
         });
     },
     display: function (pid, created, device, cb) {
-        var s = {}, total = { allowing: 0, blocking: 0, visitors: 0, pageviews: 0 };
+        var s = {}, total = { allowing: 0, blocking: 0, visitors: 0, pageviews: 0, whitelisted: 0 };
 
         var query = { pid: pid, created: created };
         if (device) {
@@ -114,9 +114,15 @@ var Tracking = {
             } else {
                 query = { pid: pid, modified: created };
             }
-            Visitor.count(query, function (err, c) {
+            Visitor.find(query, '_id whitelist', function (err, visitors) {
                 if (err) return cb({ stats: {}, total: total });
-                total.visitors = c;
+                visitors.forEach(function (el) {
+                    total.visitors++;
+
+                    if (el.whitelist.status) {
+                        total.whitelisted++;
+                    }
+                });
 
                 return cb({ stats: s, total: total });
             });

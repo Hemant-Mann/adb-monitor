@@ -14,15 +14,8 @@ var env = process.env.NODE_ENV || 'development';
 
 // view engine setup
 app.set('views', path.join(__dirname, '/app/views'));
-app.set('view cache', false);
 app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, 'public'), {
-    maxAge: 0,
-    etag: false,
-    setHeaders: function (res, path) {
-        res.setHeader('Cache-Control', 'no-cache, max-age=0')
-    }
-}));
+app.use(express.static(path.join(__dirname, 'public')));
 
 var routes = require('./app/routes/index'),
   mongoose = require('mongoose'),

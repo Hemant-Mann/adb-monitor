@@ -1,6 +1,9 @@
 # Node Modules
 node_modules/
 
+# logs
+logs/
+
 # Config-files
 config.js
 sftp-config.json

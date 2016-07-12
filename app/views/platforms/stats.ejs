@@ -68,6 +68,7 @@
                                 <th>Allowing</th>
                                 <th>Blocking</th>
                                 <th>Pageviews</th>
+                                <th>Whitelisted</th>
                                 <th>Pages / Visit</th>
                             </tr>
                         </thead>
@@ -77,6 +78,7 @@
                                 <td class="text-success"><%= Number((total.allowing / total.pageviews) * 100).toFixed(2) %> %</td>
                                 <td class="text-danger"><%= Number((total.blocking / total.pageviews) * 100).toFixed(2) %> %</td>
                                 <td><%= total.pageviews %></td>
+                                <td><%= total.whitelisted %></td>
                                 <td><%- (Number(total.pageviews / total.visitors).toFixed(3)) %></td>
                             </tr>
                         </tbody>
