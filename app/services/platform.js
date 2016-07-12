@@ -4,11 +4,11 @@ var Stat = require('../models/stat');
 
 var Platform = {
 	quickStats: function (user, cb) {
-		Plat.find({uid: user._id}, '_id domain name whitelist live', function (err, platforms) {
+		Plat.find({uid: user._id}, '_id', function (err, platforms) {
             if (err) return cb(Utils.commonMsg(500));
 
             if (platforms.length === 0) {
-                return cb(null, [], {});
+                return cb(null, {});
             }
 
             var ids = [];
@@ -17,7 +17,7 @@ var Platform = {
             });
 
             Stat.find({ pid: {$in : ids}}, 'allow block', function (err, stats) {
-                if (err || stats.length == 0) return cb(null);
+                if (err || stats.length == 0) return cb(null, {});
 
                 var pageviews = 0, allowing = 0, blocking = 0;
                 stats.forEach(function (el) {
@@ -32,7 +32,7 @@ var Platform = {
                     blocking: blocking,
                     percent: Number((blocking / pageviews) * 100).toFixed(2)
                 }
-                return cb(null, platforms, quickStats);
+                return cb(null, quickStats);
             });
         });
 	},

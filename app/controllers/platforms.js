@@ -2,7 +2,6 @@ var Shared = require('./controller');
 var Platform = require('../models/platform');
 var Utils = require('../scripts/util');
 var Stat = require('../models/stat');
-var Visitor = require('../models/visitor');
 var Tracking = require('./tracking');
 var pService = require('../services/platform');
 
@@ -19,20 +18,8 @@ var Platforms = (function () {
 
     var p = new controller();
 
-    p.secure = ['index', 'stats', 'update', 'delete', 'create', 'getCode']; // Add Pages|Methods to this array which needs authentication
+    p.secure = ['index', 'stats', 'update', 'delete', 'create', 'getCode', 'quickStats']; // Add Pages|Methods to this array which needs authentication
     p.defaultLayout = "layouts/client"; // change the layout
-
-    /**
-     * Overriding parent method
-     * @param  {Object} req Express Request Object
-     * @return {Boolean} True if authenticated
-     */
-    p._secure = function (req, res) {
-        var basic = this.parent._secure.call(this, req); // call the parent method for basic authentication
-
-        if (!basic) return false;
-        return true;
-    }
 
     /**
      * Default Index function showing all the platforms
@@ -41,15 +28,15 @@ var Platforms = (function () {
         var self = this;
         self.view.message = null;
         self.view.platforms = []; self.view.quickStats = {};
+        Platform.find({ uid: req.user._id }, function (err, p) {
+            if (err) return cb(err);
 
-        pService.quickStats(req.user, function (err, platforms, data) {
-            if (platforms.length === 0) {
+            if (p.length === 0) {
                 return res.redirect('/platforms/create.html');
             }
-            self.view.platforms = platforms;
-            self.view.quickStats = data;
 
-            return cb(null);
+            self.view.platforms = p;
+            cb();
         });
     };
 
@@ -169,6 +156,16 @@ var Platforms = (function () {
     p.api = function (req, res, next) {
         this._noview();
         pService.api(req, res, next);
+    };
+
+    p.quickStats = function (req, res, next) {
+        this._jsonView(); var self = this;
+
+        pService.quickStats(req.user, function (err, data) {
+            self.view.quickStats = data;
+
+            return next(null);
+        });
     };
 
     p.__class = controller.name.toLowerCase();

@@ -96,23 +96,20 @@ $(document).ready(function() {
         window.location.href = dest;
     });
 
-    $('#dateRangeStats').on('submit', function (e) {
-        /*e.preventDefault();
+    var page = window.location.pathname;
+    if (page.match(/platforms\/index/)) {
+        request.get({ url: 'platforms/quickStats' }, function (err, d) {
+            if (err) return;
 
-        var url = window.location.pathname,
-            self = $(this);
-        url = url.substr(1); url = url.replace(/\.html/g, '');
-        var opts = {
-            url: url,
-            data: {
-                start: self.find('select').val(),
-                end: today()
-            }
-        };
-        request._request(opts, self.attr('action') || 'GET', function (err, d) {
-            console.log(d);
-        });*/
-    });
+            var selector = $('.quickStats');
+            $.each(selector, function (i, el) {
+                var $el = $(el);
+
+                var obj = $el.data();
+                $el.html(d.quickStats[obj.type] || 0);
+            })
+        });
+    }
 
     if ($('#morris-area-chart').length > 0) {
         var start = new Date(); start.setMonth(start.getMonth() - 1);
@@ -147,32 +144,32 @@ $(document).ready(function() {
         today = yyyy + '-' + mm + '-' + dd;
         return today;
     }
-});
 
-function drawGraph(d) {
-    var data = [], prop;
-    for (prop in d.stats) {
-        data.push({
-            y: prop,
-            a: d.stats[prop].allowing,
-            b: d.stats[prop].blocking
+    function drawGraph(d) {
+        var data = [], prop;
+        for (prop in d.stats) {
+            data.push({
+                y: prop,
+                a: d.stats[prop].allowing,
+                b: d.stats[prop].blocking
+            });
+        }
+
+        Morris.Area({
+            element: 'morris-area-chart',
+            data: data,
+            xkey: 'y',
+            ykeys: ['a', 'b'],
+            labels: ['Allowing', 'Blocking'],
+            pointSize: 3,
+            lineWidth: 1,
+            hideHover: 'auto',
+            resize: true,
+            gridLineColor: '#eef0f2',
+            pointFillColors: ['#ffffff'],
+            pointStrokeColors: ['#999999'],
+            lineColors: ["#00b19d", "#3bafda"]
         });
     }
-
-    Morris.Area({
-        element: 'morris-area-chart',
-        data: data,
-        xkey: 'y',
-        ykeys: ['a', 'b'],
-        labels: ['Allowing', 'Blocking'],
-        pointSize: 3,
-        lineWidth: 1,
-        hideHover: 'auto',
-        resize: true,
-        gridLineColor: '#eef0f2',
-        pointFillColors: ['#ffffff'],
-        pointStrokeColors: ['#999999'],
-        lineColors: ["#00b19d", "#3bafda"]
-    });
-}
+});
 
