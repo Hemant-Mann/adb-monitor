@@ -25,8 +25,7 @@ var routes = require('./app/routes/index'),
 // Routes
 var authRoutes = require('./app/routes/auth'),
   websiteRoutes = require('./app/routes/website'),
-  platformRoutes = require('./app/routes/platforms');
-  accountRoutes = require('./app/routes/account');
+  accountRoutes = require('./app/routes/account'),
   paymentRoutes = require('./app/routes/payment');
 
 // uncomment after placing your favicon in /public
@@ -55,7 +54,6 @@ app.use(passport.session());
 app.use('/', routes);
 app.use('/auth', authRoutes);
 app.use('/website', websiteRoutes);
-app.use('/platforms', platformRoutes);
 app.use('/account', accountRoutes);
 app.use('/payment', paymentRoutes);
 

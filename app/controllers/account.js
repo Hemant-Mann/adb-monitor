@@ -111,7 +111,7 @@ var Account = (function () {
             if (err) return next(err);
 
             if (p.length === 0) {
-                return res.redirect('/platforms/create.html');
+                return res.redirect('/website/add.html');
             }
 
             self.view.platforms = p;

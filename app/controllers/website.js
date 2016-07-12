@@ -1,6 +1,7 @@
 var Shared = require('./controller');
 var display = require('./tracking').display;
 var User = require('../models/user');
+var Stat = require('../models/stat');
 var Platform = require('../models/platform');
 
 var Utils = require('../scripts/util');
@@ -14,7 +15,7 @@ var Website = (function () {
 
     var w = Utils.inherit(Shared, 'Website');
 
-    w.secure = ['stats', 'add']; // Add Pages|Methods to this array which needs authentication
+    w.secure = ['stats', 'add', 'update', 'delete', 'getCode']; // Add Pages|Methods to this array which needs authentication
     w.defaultLayout = "layouts/client"; // change the layout
     
     w.stats = function (req, res, next) {
@@ -57,8 +58,71 @@ var Website = (function () {
         }
     };
 
+    w._update = function (req, res, next) {
+        var self = this; self._jsonView();
+
+        var platform = req.platform;
+        var live = req.body.live,
+            whitelist = req.body.whitelist;
+
+        if (live) {
+            live = Number(live);
+            platform.live = live;
+        } else if (whitelist) {
+            whitelist = Number(whitelist);
+            platform.whitelist = whitelist;
+        }
+        
+        platform.save();
+        next(Utils.commonMsg(200, "Platform updated"));
+    };
+
+    w._delete = function (req, res, next) {
+        this._jsonView();
+
+        var p = req.platform;
+        Stat.find({ pid: p._id }, '_id', function (err, stats) {
+            if (err) return next(Utils.commonMsg(500));
+
+            if (stats.length > 0) {
+                return next({message: "You can't delete it try disabling the platform monitoring"});
+            }
+
+            p.remove(function (err) {
+                if (err) return next(Utils.commonMsg(500));
+
+                return next(Utils.commonMsg(200, 'Platform was removed'));
+            });
+        });
+    };
+
+    w.getCode = function (req, res, next) {
+        this._jsonView();
+
+        var _id = req.query.id;
+        if (!_id) return next(Utils.commonMsg(400));
+
+        this.view.code = '<script type="text/javascript">(function(){window.__adbMonID="'+ _id +'";function l(u){var e=document.createElement("script");e.type="text/javascript";e.src ="//monitoradblock.com/js/"+u;e.async=true;var x= document.getElementsByTagName("script")[0];x.parentNode.insertBefore(e, x);}l("adbmon.min.js");})();</script>';
+        next(null);
+    };
+
+    w.api = function (req, res, next) {
+        var cb = req.query.callback, pid = req.query.pid;
+        if (!pid || !cb) return next(new Error("Invalid Request"));
+
+        Platform.findOne({ _id: Utils.parseParam(pid) }, 'whitelist', function (err, p) {
+            if (err || !p) {
+                var err = new Error("Invalid Request");
+                err.status = 400;
+                return next(err);
+            }
+
+            res.send(cb + "(" + JSON.stringify(p) + ")");
+        });
+    };
+
     w._find = function (req, res, next) {
-        Platform.findOne({ _id: Utils.parseParam(req.params.id) }, function (err, p) {
+        Platform.findOne({ _id: Utils.parseParam(req.params.id), uid: req.user._id }, function (err, p) {
             if (err) return next(Utils.commonMsg(400));
 
             req.platform = p;

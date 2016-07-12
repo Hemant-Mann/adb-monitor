@@ -35,37 +35,6 @@ var Platform = {
                 return cb(null, quickStats);
             });
         });
-	},
-	api: function (req, res, next) {
-		var cb = req.query.callback;
-        if (!req.params.pid || !cb) return next(new Error("Invalid Request"));
-
-        Plat.findOne({ _id: Utils.parseParam(req.params.pid) }, 'whitelist', function (err, p) {
-            if (err || !p) {
-                var err = new Error("Invalid Request");
-                err.status = 400;
-                return next(err);
-            }
-
-            var platform = {
-                whitelist: p.whitelist
-            };
-
-            res.send(cb + "(" + JSON.stringify(platform) + ")");
-        });
-	},
-	find: function (req, res, next) {
-		if (!req.user) return res.redirect('/auth/login');
-        Plat.findOne({ _id: Utils.parseParam(req.params.id), uid: req.user._id }, function (err, platform) {
-            if (err || !platform) {
-                var err = new Error("Platform not found");
-                err.type = "json"; err.status = 400;
-                return next(err);
-            }
-
-            req.platform = platform;
-            next();
-        });
 	}
 }
 
