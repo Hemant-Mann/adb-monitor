@@ -14,4 +14,15 @@ router.get(regex, function (req, res, next) {
 	Admin._init(req, res, next)
 });
 
+router.get('/info/:model/:id', function (req, res, next) {
+	Admin._init(req, res, next, {method: 'info'});
+});
+
+router.get('/update/:model/:id', function (req, res, next) {
+	Admin._init(req, res, next, {method: 'update'});
+})
+.post('/update/:model/:id', function (req, res, next) {
+	Admin._init(req, res, next, {method: '_update'});
+})
+
 module.exports = router;

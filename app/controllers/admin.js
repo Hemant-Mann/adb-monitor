@@ -12,7 +12,7 @@ var Admin = (function () {
     'use strict';
 
     var a = Utils.inherit(Shared, 'Admin');
-    a.secure = ['index', 'search'];
+    a.secure = ['index', 'search', 'fields', 'edit', 'info', 'update', 'delete'];
 
     String.prototype.ucfirst = function () {
         return this.charAt(0).toUpperCase() + this.slice(1);
@@ -136,11 +136,88 @@ var Admin = (function () {
     };
 
     a.info = function (req, res, next) {
-    	
+    	var model = req.params.model,
+            self = this;
+
+        model = model.ucfirst();
+        self.view.item = {};
+        self.view.model = model;
+        try {
+            var m = mongoose.model(model);
+
+            m.findOne({_id: Utils.parseParam(req.params.id)}, function (err, item) {
+                if (err || !item) {
+                    return next(new Error("Invalid Request"));
+                }
+
+                for (var prop in item.schema.paths) {
+                    self.view.item[prop] = item[prop];
+                }
+                next();
+            });
+        } catch (e) {
+            next(e);
+        }
     };
 
     a.update = function (req, res, next) {
-    	next();
+        var model = req.params.model,
+            self = this;
+
+        model = model.ucfirst();
+        if (!model) return next(new Error("Invalid Request"));
+        Utils.setObj(self.view, {
+            item: {},
+            today: Utils.today,
+            model: model,
+            success: false,
+            disabled: ["_id", "created", "modified", "password", "salt"]
+        });
+
+        try {
+            var m = mongoose.model(model);
+
+            m.findOne({_id: Utils.parseParam(req.params.id)}, function (err, item) {
+                if (err || !item) {
+                    return next(new Error("Invalid Request"));
+                }
+
+                for (var prop in item.schema.paths) {
+                    self.view.item[prop] = item[prop];
+                }
+                if (req.session.saved) {
+                    self.view.success = true;
+                    delete req.session.saved;
+                }
+                next();
+            });
+        } catch (e) {
+            next(e);
+        }
+    };
+
+    a._update = function (req, res, next) {
+        var model = req.params.model,
+            self = this,
+            fields = req.body;
+
+        model = model.ucfirst();
+        if (!model) return next(new Error("Invalid Request"));
+
+        try {
+            var m = mongoose.model(model);
+            m.findOne({ _id: Utils.parseParam(req.params.id)}, function (err, item) {
+                for (f in fields) {
+                    item[f] = fields[f];
+                    item.save();
+
+                    req.session.saved = true;
+                    res.redirect('/admin/info/' + model + '/' + m._id);
+                }
+            });
+        } catch (e) {
+            next(e);
+        }
     };
 
     a.edit = function (req, res, next) {
