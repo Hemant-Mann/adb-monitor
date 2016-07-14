@@ -26,7 +26,8 @@ var routes = require('./app/routes/index'),
 var authRoutes = require('./app/routes/auth'),
   websiteRoutes = require('./app/routes/website'),
   accountRoutes = require('./app/routes/account'),
-  paymentRoutes = require('./app/routes/payment');
+  paymentRoutes = require('./app/routes/payment'),
+  adminRoutes = require('./app/routes/admin');
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -56,6 +57,7 @@ app.use('/auth', authRoutes);
 app.use('/website', websiteRoutes);
 app.use('/account', accountRoutes);
 app.use('/payment', paymentRoutes);
+app.use('/admin', adminRoutes);
 
 
 // catch 404 and forward to error handler

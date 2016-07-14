@@ -15,10 +15,6 @@ var platformSchema = new Schema({
     	type: String,
     	required: true
     },
-    whitelist: {
-        type: Boolean,
-        default: false
-    },
     created: {
         type: Date,
         default: Date.now,

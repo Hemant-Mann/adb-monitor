@@ -62,15 +62,11 @@ var Website = (function () {
         var self = this; self._jsonView();
 
         var platform = req.platform;
-        var live = req.body.live,
-            whitelist = req.body.whitelist;
+        var live = req.body.live;
 
         if (live) {
             live = Number(live);
             platform.live = live;
-        } else if (whitelist) {
-            whitelist = Number(whitelist);
-            platform.whitelist = whitelist;
         }
         
         platform.save();
@@ -110,7 +106,7 @@ var Website = (function () {
         var cb = req.query.callback, pid = req.query.pid;
         if (!pid || !cb) return next(new Error("Invalid Request"));
 
-        Platform.findOne({ _id: Utils.parseParam(pid) }, 'whitelist', function (err, p) {
+        Platform.findOne({ _id: Utils.parseParam(pid) }, 'live', function (err, p) {
             if (err || !p) {
                 var err = new Error("Invalid Request");
                 err.status = 400;
