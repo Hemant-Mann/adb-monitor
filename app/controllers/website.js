@@ -16,7 +16,10 @@ var Website = (function () {
     var w = Utils.inherit(Shared, 'Website');
 
     w.secure = ['stats', 'add', 'update', 'delete', 'getCode']; // Add Pages|Methods to this array which needs authentication
-    w.defaultLayout = "layouts/client"; // change the layout
+    w._initView = function () {
+        this.parent._initView.call(this);
+        this.defaultLayout = "layouts/client";
+    };
     
     w.stats = function (req, res, next) {
         var self = this,

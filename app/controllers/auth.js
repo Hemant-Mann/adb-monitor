@@ -13,7 +13,6 @@ var Auth = (function () {
     'use strict';
 
     var a = Utils.inherit(Shared, 'Auth');
-    a.defaultLayout = "layouts/client";
     a.beforeSession = ['login', 'register', 'forgotPassword', 'verify'];
 
     /**
@@ -31,7 +30,9 @@ var Auth = (function () {
     };
 
     a._initView = function () {
+        this.parent._initView.call(this);
         this.view.message = null;
+        this.defaultLayout = "layouts/client";
     };
 
     a.register = function (req, res, cb) {

@@ -1,4 +1,6 @@
 var urlParser = require('url');
+var fs = require('fs');
+var path = require('path');
 
 /**
  * Contains Utility functions
@@ -167,6 +169,12 @@ var utils = {
 
         return req.headers['cf-ipcountry'] || country;
     },
+    setObj: function (obj, properties) {
+        for (var prop in properties) {
+            obj[prop] = properties[prop];
+        }
+        return obj;
+    },
     inherit: function (parent, child) {
         var func = new Function('return function ' + child + ' () {}');
         var c = func();
@@ -176,6 +184,40 @@ var utils = {
         var obj = new c;
         obj.__class = c.name.toLowerCase();
         return obj;
+    },
+    ucfirst: function (s) {
+        return s.charAt(0).toUpperCase() + s.slice(1);
+    },
+    models: function (cb) {
+        var modelPath = path.join(__dirname, '../models/'),
+            models = [],
+            self = this;
+
+        if (typeof cb === "function") {
+            fs.readdir(modelPath, function (err, models) {
+                if (err) return cb([]);
+
+                models = models.map(function (val) {
+                    var name = val.split(".")[0];
+                    name = self.ucfirst(name);
+                    return name;
+                });
+
+                models.sort();
+                return cb(models);
+            });
+        } else {
+            models = fs.readdirSync(modelPath);
+
+            models = models.map(function (val) {
+                var name = val.split(".")[0];
+                name = self.ucfirst(name);
+                return name;
+            });
+
+            models.sort();
+            return models;
+        }
     }
 };
 

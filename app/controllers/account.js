@@ -17,7 +17,10 @@ var Account = (function () {
     var a = Utils.inherit(Shared, 'Account');
 
     a.secure = ['settings', 'billing', 'dashboard', 'quickStats']; // Add Pages|Methods to this array which needs authentication
-    a.defaultLayout = "layouts/client"; // change the layout
+    a._initView = function () {
+        this.parent._initView.call(this);
+        this.defaultLayout = "layouts/client";
+    };
 
     a.settings = function (req, res, cb) {
         var self = this;

@@ -18,10 +18,6 @@ var Controller = (function () {
         this.method = ''; // will store the method which has been called
         this.view = {}; // Properties set on this object can be accessed in views
         this.secure = [];   // Array to hold which functions needs authorization before executing
-
-        this._initView = function () {
-            this.view = {};
-        };
     }
 
     /**
@@ -116,6 +112,13 @@ var Controller = (function () {
 
             this.view.user = req.user;
             return true;
+        },
+        _initView: function () {
+            this.view = {};
+            this.willRenderLayoutView = true;
+            this.willRenderActionView = true;
+            this.defaultLayout= 'layouts/standard';
+            this.seo = seo;
         }
     };
 
