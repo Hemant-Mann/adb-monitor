@@ -4,6 +4,7 @@ var async = require('async');
 var User = require('../models/user');
 var Platform = require('../models/platform');
 var mongoose = require('mongoose');
+var config = require('../config/mail');
 
 /**
  * Admin Controller
@@ -24,15 +25,17 @@ var Admin = (function () {
     	this.seo.title = "Admin Panel";
     };
 
-    a._secure = function (req, res) {
-    	var basic = this.parent._secure.call(this, req, res);
-    	if (!basic || !req.user.admin) return false;
-
-    	return true;
+    a._secure = function (req, res, next) {
+    	var basic = this.parent._secure.call(this, req, res, next);
+        if (!basic || !req.user.admin) {
+            var err = new Error("Not found");
+            err.status = 404;
+            return next(err);
+        }
     };
 
 	a.index = function (req, res, next) {
-		var self = this;
+		var self = this; this.seo.title = "Admin | " + config.platform;
 		self.view.users = {total: 0, admin: 0, blocked: 0};
 		self.view.platforms = 0;
 
@@ -57,6 +60,7 @@ var Admin = (function () {
     };
 
     a.search = function (req, res, next) {
+        this.seo.title = "Admin Search | " + config.platform;
     	var params = req.query,
     		self = this,
     		model = params.model,
@@ -140,6 +144,7 @@ var Admin = (function () {
             self = this;
 
         model = model.ucfirst();
+        this.seo.title = "Admin Info - " + model + " | " + config.platform;
         self.view.item = {};
         self.view.model = model;
         try {
@@ -165,6 +170,7 @@ var Admin = (function () {
             self = this;
 
         model = model.ucfirst();
+        this.seo.title = "Admin Update - " + model + " | " + config.platform;
         if (!model) return next(new Error("Invalid Request"));
         Utils.setObj(self.view, {
             item: {},

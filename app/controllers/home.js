@@ -1,5 +1,5 @@
 var Shared = require('./controller');
-var email = require('../config/mail').fromEmail;
+var config = require('../config/mail');
 var Utils = require('../scripts/util');
 
 /**
@@ -14,7 +14,8 @@ var Home = (function () {
      * to all the views
      */
     h._initView = function () {
-        this.view.email = email;
+        this.parent._initView.call(this);
+        this.view.email = config.fromEmail;
     };
     
     h.index = function (req, res, cb) {
@@ -22,22 +23,27 @@ var Home = (function () {
     };
     
     h.support = function (req, res, cb) {
+        this.seo.title = "Support | " + config.platform;
         cb(null);
     };
 
     h.pricing = function (req, res, cb) {
+        this.seo.title = "Pricing | " + config.platform;
         cb(null);
     };
     
     h.contact = function (req, res, cb) {
+        this.seo.title = "Contact US | " + config.platform;
         cb(null);
     };
     
     h.privacy = function (req, res, cb) {
+        this.seo.title = "Privacy | " + config.platform;
         cb(null);
     };
 
     h.terms = function (req, res, cb) {
+        this.seo.title = "Terms And Conditions | " + config.platform;
         cb(null);
     };
 

@@ -6,6 +6,7 @@ var Platform = require('../models/platform');
 
 var Utils = require('../scripts/util');
 var pService = require('../services/platform');
+var config = require('../config/mail');
 
 /**
  * Website Controller
@@ -16,6 +17,12 @@ var Website = (function () {
     var w = Utils.inherit(Shared, 'Website');
 
     w.secure = ['stats', 'add', 'update', 'delete', 'getCode']; // Add Pages|Methods to this array which needs authentication
+
+    w._secure = function (req, res) {
+        var basic = this.parent._secure.call(this, req, res);
+        if (!basic) res.redirect('/auth/login.html');
+    };
+
     w._initView = function () {
         this.parent._initView.call(this);
         this.defaultLayout = "layouts/client";
@@ -29,6 +36,7 @@ var Website = (function () {
 
         self.view.platform = req.platform;
         self.view.today = Utils.today;
+        this.seo.title = "Platform Stats - " + self.view.platform.name + " | " + config.platform;
 
         display(req.platform._id, created, device, function (result) {
             self.view.stats = result.stats;
@@ -40,7 +48,7 @@ var Website = (function () {
 
     w.add = function (req, res, next) {
         this.view.message = null;
-
+        this.seo.title = "Add a website | " + config.platform;
         if (req.method === 'POST') {
             var platform = new Platform(req.body);
             platform.uid = req.user._id;

@@ -5,6 +5,7 @@ var Meta = require('../models/meta');
 var passport = require('passport');
 var Utils = require('../scripts/util');
 var AuthService = require('../services/auth');
+var config = require('../config/mail');
 
 /**
  * Auth Controller
@@ -37,6 +38,7 @@ var Auth = (function () {
 
     a.register = function (req, res, cb) {
         this.view.errors = {}; var self = this;
+        this.seo.title = "Register | " + config.platform;
 
         if (req.method === 'POST') {
             if (req.body.password !== req.body.repeatPass) {
@@ -57,6 +59,7 @@ var Auth = (function () {
     
     a.login = function (req, res, cb) {
         var self = this;
+        this.seo.title = "Login | " + config.platform;
 
         if (req.method === 'POST') {
             passport.authenticate('local', function (err, user, info) {
@@ -91,10 +94,12 @@ var Auth = (function () {
     };
 
     a.forgotPassword = function (req, res, cb) {
+        this.seo.title = "Forgot Password | " + config.platform;
         cb(null);
     };
 
     a.verify = function (req, res, cb) {
+        this.seo.title = "Verify your Account | " + config.platform;
         Meta.findOne({ prop: 'user', val: Utils.parseParam(req.params.id) }, function (err, meta) {
             if (err || !meta) {
                 var err = new Error((Utils.commonMsg(400)).message);

@@ -14,6 +14,11 @@ var Payment = (function () {
     var p = Utils.inherit(Shared, 'Payment');
     p.secure = ['create', 'cancel', 'success'];
 
+    p._secure = function (req, res) {
+        var basic = this.parent._secure.call(this, req, res);
+        if (!basic) res.redirect('/auth/login.html');
+    };
+
     p._pay = function (invid, cb) {
         Invoice.findOne({ _id: invid, live: false }, function (err, inv) {
             if (err || !inv) return cb(new Error("Invalid Request"));

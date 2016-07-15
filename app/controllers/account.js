@@ -7,6 +7,7 @@ var Utils = require('../scripts/util');
 var mail = require('../config/mail');
 var AccService = require('../services/account');
 var pService = require('../services/platform');
+var config = require('../config/mail');
 
 /**
  * Account Controller
@@ -17,6 +18,12 @@ var Account = (function () {
     var a = Utils.inherit(Shared, 'Account');
 
     a.secure = ['settings', 'billing', 'dashboard', 'quickStats']; // Add Pages|Methods to this array which needs authentication
+
+    a._secure = function (req, res) {
+        var basic = this.parent._secure.call(this, req, res);
+        if (!basic) res.redirect('/auth/login.html');
+    };
+    
     a._initView = function () {
         this.parent._initView.call(this);
         this.defaultLayout = "layouts/client";
@@ -24,6 +31,7 @@ var Account = (function () {
 
     a.settings = function (req, res, cb) {
         var self = this;
+        this.seo.title = "Account Settings | " + config.platform;
         self.view.message = null;
         self.view.errors = {};
 
@@ -71,6 +79,7 @@ var Account = (function () {
 
     a.billing = function (req, res, next) {
         var self = this;
+        this.seo.title = "Account Billing | " + config.platform;
 
         if (req.method == 'POST') { // user wants to buy more credits
             // we will create a new invoice for him and send him for payment
@@ -109,6 +118,7 @@ var Account = (function () {
 
     a.dashboard = function (req, res, next) {
         var self = this;
+        this.seo.title = "Account Dashboard | " + config.platform;
         self.view.platforms = []; self.view.quickStats = {};
         Platform.find({ uid: req.user._id }, function (err, p) {
             if (err) return next(err);

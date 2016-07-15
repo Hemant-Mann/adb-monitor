@@ -2,6 +2,11 @@ var Utils = require('../scripts/util');
 var urlParser = require('url');
 var seo = require('../config/seo');
 
+var getSeo = function () {
+    var obj = Utils.copyObj(seo);
+    return obj;
+};
+
 /**
  * Shared Controller
  */
@@ -9,7 +14,7 @@ var Controller = (function () {
     'use strict';
 
     function Controller() {
-        this.seo = seo;
+        this.seo = getSeo();
         this.__class = '';
         this.willRenderLayoutView = true;
         this.willRenderActionView = true;
@@ -40,13 +45,7 @@ var Controller = (function () {
             self.method = method;
             self.defaultExtension = Utils.getExtension(req.url);
 
-            if (self.secure.length > 0 && self.secure.indexOf(self.method) !== -1) {
-                if (!self._secure(req, res)) {
-                    return res.redirect('/auth/login.html');
-                }
-            } else {
-                self.view.user = null;
-            }
+            self._secure(req, res, next);
             
             self[method](req, res, function (err, success) {
                 if (err) {
@@ -61,10 +60,6 @@ var Controller = (function () {
                     self._render(res, next);
                 }
             });
-        },
-        _noview: function () {
-            this.willRenderLayoutView = false;
-            this.willRenderActionView = false;
         },
         _jsonView: function () {
             this.defaultExtension = "json";
@@ -104,13 +99,20 @@ var Controller = (function () {
          * @param  {Object} req Express Request Object
          * @return {Boolean} False on failure else sets user to views
          */
-        _secure: function (req, res) {
+        _secure: function (req, res, next) {
+            var self = this;
+            self.view.user = null;
+
+            if (self.secure.length < 0 || self.secure.indexOf(self.method) === -1) {
+                return true;
+            }
+            
             if (!req.user) {
-                req.session.previousPath = req.originalUrl
+                req.session.previousPath = req.originalUrl;
                 return false;
             }
 
-            this.view.user = req.user;
+            self.view.user = req.user;
             return true;
         },
         _initView: function () {
@@ -118,7 +120,7 @@ var Controller = (function () {
             this.willRenderLayoutView = true;
             this.willRenderActionView = true;
             this.defaultLayout= 'layouts/standard';
-            this.seo = seo;
+            this.seo = getSeo();
         }
     };
 
