@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-var Utils = require('../scripts/util');
 var Home = require('../controllers/home');
 var Account = require('../controllers/account');
 var track = require('../controllers/tracking').execute;
@@ -12,7 +11,7 @@ router.get('/', function (req, res, next) {
 });
 
 // Controller - methods
-var regex = Utils.urlRegex(Home);
+var regex = Home._public();
 router.get(regex, function (req, res, next) {
 	Home._init(req, res, next)
 });
@@ -20,7 +19,7 @@ router.get(regex, function (req, res, next) {
 // Tracking url
 router.get('/img/_adm.gif', track);
 
-regex = Utils.makeRegex(['dashboard'], ['html', 'json']);
+regex = Home._makeRegex(['dashboard'], ['html', 'json']);
 router.get(regex, function (req, res, next) {
 	Account._init(req, res, next, {method: 'dashboard'});
 });

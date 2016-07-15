@@ -1,7 +1,5 @@
 var express = require('express');
 var router = express.Router();
-
-var Utils = require('../scripts/util');
 var Payment = require('../controllers/payment');
 
 router.get('/create/:invid', function (req, res, next) {
@@ -9,7 +7,7 @@ router.get('/create/:invid', function (req, res, next) {
 });
 
 // Controller - methods
-var regex = Utils.urlRegex(Payment);
+var regex = Payment._public();
 router.get(regex, function (req, res, next) {
 	Payment._init(req, res, next)
 });

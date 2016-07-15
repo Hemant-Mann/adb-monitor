@@ -1,16 +1,14 @@
 var express = require('express');
 var router = express.Router();
-
-var Utils = require('../scripts/util');
 var Website = require('../controllers/website');
 
 // Capture  request
-var regex = Utils.urlRegex(Website);
+var regex = Website._public();
 router.get(regex, function (req, res, next) {
 	Website._init(req, res, next);
 });
 
-regex = Utils.makeRegex(['add'], ['html', 'json']);
+regex = Website._makeRegex(['add'], ['html', 'json']);
 router.post(regex, function (req, res, next) {
 	Website._init(req, res, next);
 });
