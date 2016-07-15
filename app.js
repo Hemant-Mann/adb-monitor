@@ -15,6 +15,10 @@ var env = process.env.NODE_ENV || 'development';
 // view engine setup
 app.set('views', path.join(__dirname, '/app/views'));
 app.set('view engine', 'ejs');
+app.use(function (req, res, next) {
+  res.removeHeader('x-powered-by');
+  next();
+});
 app.use(express.static(path.join(__dirname, 'public')));
 
 var routes = require('./app/routes/index'),

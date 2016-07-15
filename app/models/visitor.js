@@ -24,7 +24,8 @@ var visitSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    modified: Date
+    modified: Date,
+    last: Date
 }, { collection: 'visitors' });
 
 visitSchema.index({ pid: 1, cookie: 1, device: 1 });
@@ -42,7 +43,12 @@ visitSchema.statics.process = function (opts, extra, cb) {
 		if (!visitor) {
 			visitor = new self(opts);
             visitor.total = 0;
-		}
+		} else {
+            if ((visitor.last || 0) >= extra.time) {
+                return cb(true);   // user doing something fishy
+            }
+        }
+        visitor.last = extra.time;
 
         if (!visitor.country) {
             visitor.country = extra.country;

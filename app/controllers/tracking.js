@@ -70,7 +70,7 @@ var Tracking = {
         }
         // Check Visitor
         var whitelist = params.wh || false;
-        Visitor.process({ cookie: params.ckid, pid: opts.pid, device: device }, {whitelist: whitelist, country : Utils.findCountry(req) }, function (err) {
+        Visitor.process({ cookie: params.ckid, pid: opts.pid, device: device }, {whitelist: whitelist, country : Utils.findCountry(req), time: Number(params.ti) }, function (err) {
             if (err) return false;
 
             var query = { pid: opts.pid, browser: browser, device: device };
@@ -136,7 +136,7 @@ var execute = function (req, res, next) {
     Tracking.validate(params, req, function (success, opts) {
         if (!success) return false;
 
-        Tracking.process(req, opts)
+        Tracking.process(req, opts);
     });
     res.redirect('/img/_blue.gif');
 };
