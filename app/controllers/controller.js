@@ -144,6 +144,10 @@ var Controller = (function () {
 
             return new RegExp(regexString);
         },
+        _noview: function () {
+            this.willRenderActionView = false;
+            this.willRenderLayoutView = false;
+        },
         /**
          * Given an array of strings it will form a regular expression
          * It will match "/login" || "/register"

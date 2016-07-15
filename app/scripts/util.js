@@ -80,6 +80,7 @@ var utils = {
         return o;
     },
     dateQuery: function (obj) {
+        if (!obj) obj = {};
         var start, end, tmp;
 
         start = new Date(); end = new Date();

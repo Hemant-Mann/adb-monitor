@@ -38,6 +38,7 @@ var UserSchema = new Schema({
         required: true,
         default: 0
     },
+    used: Number,
     admin: Boolean,
     live: {
         type: Boolean,

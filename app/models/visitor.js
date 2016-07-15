@@ -31,6 +31,7 @@ var visitSchema = new Schema({
 visitSchema.index({ pid: 1, cookie: 1, device: 1 });
 visitSchema.index({ pid: 1, device: 1, modified: 1 });
 visitSchema.index({ pid: 1, modified: 1 });
+visitSchema.index({ pid: 1, created: 1 });
 
 visitSchema.statics.process = function (opts, extra, cb) {
 	var self = this;
