@@ -7,7 +7,7 @@
                     <div class="input-group">
                         <label class="sr-only">Table</label>
                         
-                        <select name="model" class="form-control searchModel" value="{$model}">
+                        <select name="model" class="form-control searchModel" value="<%= model %>">
                             <% for (i in models) { %>
                             <option value="<%= models[i] %>"><%= models[i] %></option>
                             <% } %>

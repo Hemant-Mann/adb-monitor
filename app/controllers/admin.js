@@ -63,7 +63,7 @@ var Admin = (function () {
         this.seo.title = "Admin Search | " + config.platform;
     	var params = req.query,
     		self = this,
-    		model = params.model,
+    		model = params.model || "",
     		property = params.key || "_id",
     		value = params.value,
     		page = params.page || 1,
@@ -75,7 +75,7 @@ var Admin = (function () {
     	Utils.setObj(self.view, {
     		results: [],
     		fields: [],
-    		model: model,
+    		model: model.ucfirst(),
     		page: page,
     		limit: limit,
     		property: property,
@@ -140,7 +140,7 @@ var Admin = (function () {
     };
 
     a.info = function (req, res, next) {
-    	var model = req.params.model,
+    	var model = req.params.model || "",
             self = this;
 
         model = model.ucfirst();
@@ -166,7 +166,7 @@ var Admin = (function () {
     };
 
     a.update = function (req, res, next) {
-        var model = req.params.model,
+        var model = req.params.model || "",
             self = this;
 
         model = model.ucfirst();
@@ -203,7 +203,7 @@ var Admin = (function () {
     };
 
     a._update = function (req, res, next) {
-        var model = req.params.model,
+        var model = req.params.model || "",
             self = this,
             fields = req.body;
 
@@ -213,13 +213,13 @@ var Admin = (function () {
         try {
             var m = mongoose.model(model);
             m.findOne({ _id: Utils.parseParam(req.params.id)}, function (err, item) {
-                for (f in fields) {
+                for (var f in fields) {
                     item[f] = fields[f];
-                    item.save();
-
-                    req.session.saved = true;
-                    res.redirect('/admin/info/' + model + '/' + m._id);
                 }
+                item.save();
+
+                req.session.saved = true;
+                res.redirect('/admin/update/' + model + '/' + item._id);
             });
         } catch (e) {
             next(e);
@@ -227,11 +227,46 @@ var Admin = (function () {
     };
 
     a.edit = function (req, res, next) {
-    	next();
+        var params = req.params,
+            model = params.model || "",
+            id = params.id,
+            property = params.property,
+            value = params.value;
+
+        model = model.ucfirst();
+        if (!model || !id || !property) return next(new Error("Invalid Request"));
+        try {
+            var m = mongoose.model(model);
+            var set = {}; set[property] = value;
+            m.update({ _id: Utils.parseParam(id) }, {$set: set}, function (err) {
+                if (err) {
+                    return next(err);
+                }
+                return res.redirect(req.get('Referrer'));
+            });
+        } catch (e) {
+            next(e);
+        }
     };
 
     a.delete = function (req, res, next) {
-    	next();
+        var params = req.params || "",
+            model = params.model,
+            id = params.id;
+
+        model.ucfirst();
+        if (!model || !id) return next(new Error("Invalid Request"));
+        try {
+            var m = mongoose.model(model);
+            m.remove({ _id: Utils.parseParam(id) }, function (err) {
+                if (err) {
+                    return next(err);
+                }
+                return res.redirect(req.get('Referrer'));
+            });
+        } catch (e) {
+            next(e);
+        }
     };
 
     a.fields = function (req, res, next) {
