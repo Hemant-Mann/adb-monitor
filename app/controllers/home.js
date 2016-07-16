@@ -16,6 +16,7 @@ var Home = (function () {
     h._initView = function () {
         this.parent._initView.call(this);
         this.view.email = config.fromEmail;
+        this.view.domain = config.domain;
     };
     
     h.index = function (req, res, cb) {

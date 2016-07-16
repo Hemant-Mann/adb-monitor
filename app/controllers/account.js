@@ -38,7 +38,6 @@ var Account = (function () {
         if (req.method == 'POST') {
             var action = req.body.action,
                 user = req.user;
-            user.name = req.body.name;
 
             if (action == "saveUser") {
                 User.update({ _id: user._id }, { $set: { name: user.name } }, function (err, u) {
@@ -47,27 +46,11 @@ var Account = (function () {
                     cb(Utils.commonMsg(200, "Account Info updated"));
                 });
             } else if (action === "changePass") {
-                var password = req.body.password;
-
-                User.findOne({ _id: user._id }, function (err, u) {
-                    if (err) return cb(Utils.commonMsg(500));
-
-                    if (!u.authenticate(password)) {
-                        return cb({ message: "Invalid Password" });
+                User.updatePassword(user._id, req.body.password, req.body.npassword, function (err) {
+                    if (err.errors) {
+                        self.view.errors = err.errors;
                     }
-
-                    u.password = req.body.npassword;
-                    u.save(function (err) {
-                        req.user = u;
-                        self.view.user = u;
-
-                        if (err && err.errors) {
-                            self.view.errors = err.errors;
-                            return cb({ message: err.message });
-                        }
-
-                        cb(Utils.commonMsg(200, "Password updated"));
-                    });
+                    return cb({ message: err.message });
                 });
             } else {
                 cb(); // fallback situation in case of invalid request

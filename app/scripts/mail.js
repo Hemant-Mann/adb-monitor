@@ -21,7 +21,7 @@ var Mail = {
 		        if (error) {
 		        	return cb(Utils.commonMsg(500));
 		        }
-		        cb(false, {message: "Check your email for account verification"});    // only here process completes
+		        cb(false, {message: data.message});    // only here process completes
 		    });
 		});
 	},

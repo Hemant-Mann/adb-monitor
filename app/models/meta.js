@@ -14,7 +14,6 @@ var metaSchema = new Schema({
 }, { collection: 'metas' });
 
 metaSchema.index({ prop: 1, pid: 1 });
-metaSchema.index({ _id: 1, live: 1 });
 
 var Meta = mongoose.model('Meta', metaSchema);
 module.exports = Meta;

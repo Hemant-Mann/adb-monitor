@@ -52,7 +52,8 @@ var Auth = {
 		        user: user,
 		        code: meta.val,
 		        platform: mailConfig.platform,
-		        domain: mailConfig.domain
+		        domain: mailConfig.domain,
+		        message: "Check your email for account verification"
 		    };
 		    Mail.send('register', opts, function (err, success) {
 		    	if (err) {
@@ -63,9 +64,32 @@ var Auth = {
 		    });
 		});
 	},
-	login: function () {
+	forgotPass: function (user, meta, cb) {
+        meta.save(function (err) {
+            if (err) return Utils.commonMsg(500);
 
-	}
+            var opts = {
+            	from: mailConfig.from,
+            	to: user.email,
+            	subject: 'Reset your password'
+            };
+
+            opts.data = {
+            	user: user,
+            	meta: meta,
+            	platform: mailConfig.platform,
+		        domain: mailConfig.domain,
+		        message: "Check your email for further instructions"
+            };
+            Mail.send('forgotpass', opts, function (err, success) {
+            	if (err) {
+            		meta.remove();
+            		return cb(err);
+            	}
+            	cb(success);
+            });
+        });
+    }
 }
 
 module.exports = Auth;

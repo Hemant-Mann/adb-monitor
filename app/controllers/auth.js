@@ -14,7 +14,7 @@ var Auth = (function () {
     'use strict';
 
     var a = Utils.inherit(Shared, 'Auth');
-    a.beforeSession = ['login', 'register', 'forgotPassword', 'verify'];
+    a.beforeSession = ['login', 'register', 'forgotPassword', 'resetPassword', 'verify'];
 
     /**
      * If session is initialized for the user then don't let him visit beforeSession URLs
@@ -95,7 +95,61 @@ var Auth = (function () {
 
     a.forgotPassword = function (req, res, cb) {
         this.seo.title = "Forgot Password | " + config.platform;
-        cb(null);
+        this.view.message = '';
+        if (req.method === 'POST') {
+            User.findOne({ email: req.body.email }, function (err, u) {
+                if (err || !u) {
+                    return cb({message: 'Check your email for further instructions'});
+                }
+                var meta = new Meta({
+                    prop: 'user',
+                    pid: u._id,
+                    val: 'forgotPass'
+                });
+                AuthService.forgotPass(u, meta, cb);
+            });
+        } else {
+            cb(null);
+        }
+    };
+
+    a.resetPassword = function (req, res, cb) {
+        this.view.message = null; this.view.errors = {};
+        var id = req.params.id, self = this;
+
+        Meta.findOne({ _id: Utils.parseParam(id), val: 'forgotPass' }, function (err, meta) {
+            if (err || !meta) {
+                return cb(Utils.commonMsg(400));
+            }
+
+            if (req.method === 'GET') {
+                return cb();
+            }
+
+            var pass = req.body.password,
+                repeatPass = req.body.repeatPass;
+
+            if (pass !== repeatPass) {
+                return cb({ message: "Password's don't match" });
+            }
+
+            User.findOne({ _id: meta.pid }, function (err, u) {
+                if (err || !u) return cb(Utils.commonMsg(500));
+
+                u.salt = null;  // to hash password on saving
+                u.password = pass;
+                u.save(function (err) {
+                    if (err) {
+                        if (err.errors) {
+                            self.view.errors = err.errors;
+                        }
+                        return cb({ message: err.message });
+                    }
+                    meta.remove();  // remove resetpass request after process is complete
+                    cb(Utils.commonMsg(200, 'Password updated'));
+                });
+            });
+        });
     };
 
     a.verify = function (req, res, cb) {

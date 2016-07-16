@@ -71,8 +71,13 @@ var Website = (function () {
 
     w._update = function (req, res, next) {
         var self = this; self._jsonView();
-
         var platform = req.platform;
+        if (req.user.used >= req.user.credits) {
+            platform.live = false;
+            platform.save();
+            return next({message: 'Please add more credits to your account to enable tracking!!'});
+        }
+
         var live = req.body.live;
 
         if (live) {
