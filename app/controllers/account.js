@@ -17,7 +17,7 @@ var Account = (function () {
 
     var a = Utils.inherit(Shared, 'Account');
 
-    a.secure = ['settings', 'billing', 'dashboard', 'quickStats']; // Add Pages|Methods to this array which needs authentication
+    a.secure = ['settings', 'billing', 'dashboard', 'quickStats', 'invoice']; // Add Pages|Methods to this array which needs authentication
 
     a._secure = function (req, res) {
         var basic = this.parent._secure.call(this, req, res);
@@ -63,23 +63,32 @@ var Account = (function () {
     a.billing = function (req, res, next) {
         var self = this;
         this.seo.title = "Account Billing | " + config.platform;
+        self.view.message = req.session.message || null;
+        delete req.session.message;
 
         if (req.method == 'POST') { // user wants to buy more credits
             // we will create a new invoice for him and send him for payment
             var data = Invoice.calculate(req.body.visitors);
-            var inv = new Invoice({
-                uid: req.user._id,
-                visitors: data.visitors,
-                amount: data.price,
-                currency: 'USD',
-                payid: 'PAYPAL_ID'
-            });
-            inv.save(function (err) {
-                if (err) return next(Utils.commonMsg(500));
+            Invoice.findOne({ uid: req.user._id, live: false }, function (err, inv) {
+                if (inv) {
+                    req.session.message = "Please first clear the unpaid invoices!!";
+                    return res.redirect('/account/billing.html');
+                }
 
-                return res.redirect('/payment/create/' + inv._id);
+                var inv = new Invoice({
+                    uid: req.user._id,
+                    visitors: data.visitors,
+                    amount: data.price,
+                    currency: 'USD',
+                    payid: 'PAYPAL_ID'
+                });
+                inv.save(function (err) {
+                    if (err) return next(Utils.commonMsg(500));
+
+                    return res.redirect('/payment/create/' + inv._id);
+                });
             });
-        } else{
+        } else {
             Invoice.find({ uid: req.user._id }).select('_id visitors amount payid live created currency').sort({ created: -1 }).exec(function (err, invoices) {
                 if (err || invoices.length == 0) {
                     self.view.invoices = [];
@@ -87,27 +96,44 @@ var Account = (function () {
                     self.view.invoices = invoices;
                 }
 
-                AccService.billing(req.user, function (err, used) {
-                    if (err) {
-                        return next(new Error("Internal Server Error"));
-                    }
+                // AccService.billing(req.user, function (err, used) {
+                //     if (err) {
+                //         return next(new Error("Internal Server Error"));
+                //     }
 
-                    self.view.used = used;
-                    next(null);
-                });
+                //     self.view.used = used;
+                //     next(null);
+                // });
+                self.view.used = req.user.used;
+                next();
             });
         }
     };
 
     a.dashboard = function (req, res, next) {
-        var self = this;
+        var self = this, expired = false;
         this.seo.title = "Account Dashboard | " + config.platform;
-        self.view.platforms = []; self.view.quickStats = {};
+        Utils.setObj(self.view, {
+            platforms: [],
+            quickStats: {},
+            message: ''
+        });
+        if (req.user.used >= req.user.credits) {
+            self.view.message = "Your credits have been expired!! Please visit <a href='/account/billing.html'>Billing</a> Page";
+            expired = true;
+        }
         Platform.find({ uid: req.user._id }, function (err, p) {
             if (err) return next(err);
 
             if (p.length === 0) {
                 return res.redirect('/website/add.html');
+            }
+
+            if (expired) {
+                p.forEach(function (el) {
+                    el.live = false;
+                    el.save();
+                });
             }
 
             self.view.platforms = p;
@@ -122,6 +148,18 @@ var Account = (function () {
             self.view.quickStats = data;
 
             return next(null);
+        });
+    };
+
+    a.invoice = function (req, res, next) {
+        var id = req.params.invid;
+
+        Invoice.remove({ _id: Utils.parseParam(id), uid: req.user._id, live: false}, function (err) {
+            if (err) {
+                return next({ message: 'Failed to delete the invoice!!' });
+            }
+
+            next(Utils.commonMsg(200, 'Invoice deleted'));
         });
     };
 

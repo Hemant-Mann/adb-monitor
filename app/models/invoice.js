@@ -33,7 +33,7 @@ var invSchema = new Schema({
     }
 }, { collection: 'invoices' });
 
-invSchema.index({ _id: 1, live: 1 });
+invSchema.index({ _id: 1, live: 1, uid: 1 });
 invSchema.index({ uid: 1 });
 
 invSchema.statics.calculate = function (visitors) {

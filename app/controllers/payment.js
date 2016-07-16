@@ -4,6 +4,7 @@ var paypal = require('paypal-rest-sdk');
 var paymentConfig = require('../config/payment');
 var Utils = require('../scripts/util');
 var Invoice = require('../models/invoice');
+var Platform = require('../models/platform');
 
 /**
  * Payment Controller
@@ -19,8 +20,13 @@ var Payment = (function () {
         if (!basic) res.redirect('/auth/login.html');
     };
 
-    p._pay = function (invid, cb) {
-        Invoice.findOne({ _id: invid, live: false }, function (err, inv) {
+    p._initView = function () {
+        this.parent._initView.call(this);
+        this.defaultLayout = "layouts/client";
+    };
+
+    p._pay = function (invid, uid, cb) {
+        Invoice.findOne({ _id: invid, live: false, uid: uid }, function (err, inv) {
             if (err || !inv) return cb(new Error("Invalid Request"));
             
             var payment = {
@@ -49,7 +55,7 @@ var Payment = (function () {
         var self = this; this._noview();
         paypal.configure(paymentConfig);
 
-        self._pay(Utils.parseParam(req.params.invid), function (err, invoice, payment) {
+        self._pay(Utils.parseParam(req.params.invid), req.user._id, function (err, invoice, payment) {
             if (err) return cb(err);
 
             req.session.invoice = invoice;
@@ -80,7 +86,8 @@ var Payment = (function () {
     };
     
     p.success = function (req, res, cb) {
-        this._jsonView(); var self = this;
+        var self = this;
+        self.seo.title = 'Payment Succesful';
 
         var paymentInfo = req.session.paymentInfo || {},
             paymentId = paymentInfo.id,
@@ -101,18 +108,26 @@ var Payment = (function () {
             if (!user.credits) {
                 user.credits = 0;
             }
+            user.salt = null;   // to prevent password override
             user.credits += Number(invoice.visitors);
             user.save();
 
+            Platform.update({ uid: user._id }, {$set: {live: true}}, function (err) {
+                // do nothing
+            });
+
             delete req.session.invoice;
             delete req.session.paymentInfo;
-            return cb();
+            return cb({ message: "You have successfully completed the payment" });
         });
     };
     
     p.cancel = function (req, res, cb) {
-        this._noview();
-        res.send('payment cancelled');
+        this.seo.title = 'Payment Cancelled';
+        this.view.message = 'Payment Cancelled';
+        delete req.session.invoice;
+        delete req.session.paymentInfo;
+        cb();
     };
 
     return p;

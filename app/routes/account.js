@@ -13,4 +13,8 @@ router.post(regex, function (req, res, next) {
 	Account._init(req, res, next);
 });
 
+router.delete('/invoice/:invid', function (req, res, next) {
+	Account._init(req, res, next, {method: 'invoice'});
+});
+
 module.exports = router;
