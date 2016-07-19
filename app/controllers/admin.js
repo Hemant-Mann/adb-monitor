@@ -227,11 +227,12 @@ var Admin = (function () {
     };
 
     a.edit = function (req, res, next) {
-        var params = req.params,
+        var params = req.query,
             model = params.model || "",
             id = params.id,
             property = params.property,
-            value = params.value;
+            value = params.value,
+            self = this;
 
         model = model.ucfirst();
         if (!model || !id || !property) return next(new Error("Invalid Request"));
@@ -242,7 +243,13 @@ var Admin = (function () {
                 if (err) {
                     return next(err);
                 }
-                return res.redirect(req.get('Referrer'));
+
+                if (params.response) {
+                    self._jsonView();
+                    next({ message: "Updated Succesfully!!" });
+                } else {
+                    return res.redirect(req.get('Referrer'));
+                }
             });
         } catch (e) {
             next(e);

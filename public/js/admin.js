@@ -54,4 +54,23 @@ $(function () {
             });
         });
     });
+
+    $('.update').on('click', function (e) {
+        e.preventDefault();
+
+        var self = $(this),
+            type = self.data('request') || 'POST',
+            href = self.attr('href') || self.data('href'),
+            data = self.data('send');
+
+        request._request({ url: href, data: data }, type, function (err, d) {
+            if (err) {
+                return bootbox.alert(d);
+            }
+
+            bootbox.alert(d.message, function () {
+                window.location.href = window.location.href;
+            });
+        });
+    });
 });

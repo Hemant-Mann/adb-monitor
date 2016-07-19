@@ -8,6 +8,7 @@ var mail = require('../config/mail');
 var AccService = require('../services/account');
 var pService = require('../services/platform');
 var config = require('../config/mail');
+var async = require('async');
 
 /**
  * Account Controller
@@ -17,7 +18,7 @@ var Account = (function () {
 
     var a = Utils.inherit(Shared, 'Account');
 
-    a.secure = ['settings', 'billing', 'dashboard', 'quickStats', 'invoice']; // Add Pages|Methods to this array which needs authentication
+    a.secure = ['settings', 'billing', 'dashboard', 'quickStats', 'invoice', 'list']; // Add Pages|Methods to this array which needs authentication
 
     a._secure = function (req, res) {
         var basic = this.parent._secure.call(this, req, res);
@@ -160,6 +161,52 @@ var Account = (function () {
             }
 
             next(Utils.commonMsg(200, 'Invoice deleted'));
+        });
+    };
+
+    a._admin = function (req, res, next) {
+        if (!req.user.admin) {
+            var err = new Error("Not found");
+            err.status = 404;
+            return next(err);
+        }
+        this.defaultLayout = "layouts/admin";
+    };
+
+    a.list = function (req, res, next) {
+        this._admin(req, res, next);
+        var self = this,
+            limit = req.query.limit || 10,
+            page = req.query.page || 1,
+            query = {},
+            property = req.query.property || "",
+            value = req.query.value;
+
+        Utils.setObj(self.view, {
+            users: [],
+            page: page,
+            count: 0,
+            limit: limit,
+            property: "",
+            value: ""
+        });
+
+        if (property) {
+            query[property] = value;
+        }
+
+        async.waterfall([
+            function (callback) {
+                User.find(query).limit(limit).skip(limit * (page - 1)).exec(callback);
+            },
+            function (users, callback) {
+                self.view.users = users;
+
+                User.count(query, callback);
+            }
+        ], function (err, count) {
+            self.view.count = count;
+            next();
         });
     };
 
