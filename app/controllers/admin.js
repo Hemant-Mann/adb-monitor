@@ -37,7 +37,7 @@ var Admin = (function () {
 	a.index = function (req, res, next) {
 		var self = this; this.seo.title = "Admin | " + config.platform;
 		self.view.users = {total: 0, admin: 0, blocked: 0};
-		self.view.platforms = 0;
+		self.view.platforms = 0; self.view.invoices = 0;
 
 		async.waterfall([
 			function (callback) {
@@ -51,10 +51,15 @@ var Admin = (function () {
 					self.view.users.total++;
 				});
 				Platform.count({}, callback);
-			}
-		], function (err, platforms) {
+			},
+            function (platforms, callback) {
+                self.view.platforms = platforms;
+                var Invoice = mongoose.model('Invoice');
+                Invoice.count({}, callback);
+            }
+		], function (err, invoices) {
 			if (err) return next();
-			self.view.platforms = platforms;
+			self.view.invoices = invoices;
 			next();
 		});
     };
@@ -73,18 +78,10 @@ var Admin = (function () {
     		$sort = params['sort'] || "desc";
 
     	Utils.setObj(self.view, {
-    		results: [],
-    		fields: [],
-    		model: model.ucfirst(),
-    		page: page,
-    		limit: limit,
-    		property: property,
-    		val: value,
-    		sign: sign,
-    		order: order,
-    		sort: $sort,
-    		count: 0,
-    		success: false,
+    		results: [], fields: [], model: model.ucfirst(),
+    		page: page, limit: limit, property: property,
+    		val: value, sign: sign, order: order,
+    		sort: $sort, count: 0, success: false,
             models: Utils.models()
     	});
     	if (!model || !property) return next();
@@ -96,13 +93,11 @@ var Admin = (function () {
     		where[property] = value;
     	}
 
-    	if ($sort == "desc") {
-    		sortQ[order] = -1;
-    	} else if ($sort == "asc") {
-    		sortQ[order] = 1;
-    	} else {
-    		sortQ[order] = 1;
-    	}
+        switch ($sort) {
+            case 'desc': sortQ[order] = -1; break;
+            case 'asc': sortQ[order] = 1; break;
+            default: sortQ[order] = 1;
+        }
 
     	try {
     		model = model.ucfirst();
@@ -116,10 +111,7 @@ var Admin = (function () {
     				self.view.results = objects;
 
                     if (objects.length > 0) {
-                        var obj = objects[0].schema.paths;
-                        for (var prop in obj) {
-                            self.view.fields.push(prop);
-                        }
+                        self.view.fields = Object.keys(objects[0].schema.paths);
                     }
     				m.count(where, callback);
     			}
@@ -173,10 +165,8 @@ var Admin = (function () {
         this.seo.title = "Admin Update - " + model + " | " + config.platform;
         if (!model) return next(new Error("Invalid Request"));
         Utils.setObj(self.view, {
-            item: {},
-            today: Utils.today,
-            model: model,
-            success: false,
+            item: {}, today: Utils.today,
+            model: model, success: false,
             disabled: ["_id", "created", "modified", "password", "salt"]
         });
 
@@ -240,9 +230,7 @@ var Admin = (function () {
             var m = mongoose.model(model);
             var set = {}; set[property] = value;
             m.update({ _id: Utils.parseParam(id) }, {$set: set}, function (err) {
-                if (err) {
-                    return next(err);
-                }
+                if (err) return next(err);
 
                 if (params.response) {
                     self._jsonView();
@@ -266,9 +254,7 @@ var Admin = (function () {
         try {
             var m = mongoose.model(model);
             m.remove({ _id: Utils.parseParam(id) }, function (err) {
-                if (err) {
-                    return next(err);
-                }
+                if (err) return next(err);
                 return res.redirect(req.get('Referrer'));
             });
         } catch (e) {
@@ -284,26 +270,17 @@ var Admin = (function () {
         model = model.ucfirst();
         try {
             var m = mongoose.model(model);
-            var paths = m.schema.paths,
-                fields = [];
-
-            for (var prop in paths) {
-                fields.push(prop);
-            }
-
-            self.view.fields = fields;
+            
+            self.view.fields = Object.keys(m.schema.paths);
             next();
         } catch (e) {
-            console.log(e);
             self.view.fields = [];
         }
     };
 
     a.loginas = function (req, res, next) {
         var uid = req.query.uid;
-        if (!uid) {
-            return next(new Error('Not found'));
-        }
+        if (!uid) return next(new Error('Not found'));
 
         req.session.adminUID = req.user._id;
         User.findOne({ _id: uid }, function (err, u) {

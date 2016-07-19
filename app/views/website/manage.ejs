@@ -1,0 +1,79 @@
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <div class="row col-lg-12">
+            <h3 class="page-header text-center">Platforms</h3>
+            <form class="form-inline text-center" role="form" method="get" action="">
+                <div class="form-group">
+                    <div class="input-group">
+                        <select name="property" class="form-control" value="<%= property %>">
+                            <option value="_id">Platform ID</option>
+                            <option value="live">Live</option>
+                            <option value="uid">User ID</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" name="value" class="form-control" placeholder="Enter value" value="<%= value %>" />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+            <hr>
+            <div class="panel panel-default">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>User ID</th>
+                            <th>Domain</th>
+                            <th>Modified</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (i in platforms) { %>
+                        <tr>
+                            <td><%= platforms[i]._id %></td>
+                            <td><a href="/admin/info/user/<%= platforms[i].uid %>"><%= platforms[i].uid %></a></td>
+                            <td><%= platforms[i].domain %></td>
+                            <td>
+                                <% if (platforms[i].live) { %>
+                                <span class="label label-success">Active</span>
+                                <% } else { %>
+                                <span class="label label-warning">Inactive</span>
+                                <% } %>
+                            </td>
+                            <td><small><%= platforms[i].modified %></small></td>
+                            <td>
+                                <% var send = { model: 'platform', id: platforms[i]._id, property: 'live', value: 0, response: 1}; %>
+                                <% if (platforms[i].live) { %>
+                                <a href="admin/edit" data-request="GET" data-send='<%- JSON.stringify(send) %>' class="update btn btn-warning btn-xs"><i class="fa fa-ban"></i></a>&nbsp;
+                                <% } else { %>
+                                <% send.value = 1; %>
+                                <a href="admin/edit" data-request="GET" data-send='<%- JSON.stringify(send) %>' class="update btn btn-primary btn-xs"><i class="fa fa-check"></i></a>&nbsp;
+                                <% } %>
+                                
+                                <a href="#" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-center">
+                <ul class="pager">
+                    <% if (page != 1) { %>
+                    <li><a href="{echo Shared\Markup::pagination($page - 1)}">Previous</a></li>
+                    <% } %>
+                    <% if (page < count/limit) { %>
+                    <li><a href="{echo Shared\Markup::pagination($page + 1)}">Next</a></li>
+                    <% } %>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>

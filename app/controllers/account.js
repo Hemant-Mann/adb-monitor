@@ -18,7 +18,7 @@ var Account = (function () {
 
     var a = Utils.inherit(Shared, 'Account');
 
-    a.secure = ['settings', 'billing', 'dashboard', 'quickStats', 'invoice', 'list']; // Add Pages|Methods to this array which needs authentication
+    a.secure = ['settings', 'billing', 'dashboard', 'quickStats', 'invoice', 'list', 'invoices']; // Add Pages|Methods to this array which needs authentication
 
     a._secure = function (req, res) {
         var basic = this.parent._secure.call(this, req, res);
@@ -156,9 +156,7 @@ var Account = (function () {
         var id = req.params.invid;
 
         Invoice.remove({ _id: Utils.parseParam(id), uid: req.user._id, live: false}, function (err) {
-            if (err) {
-                return next({ message: 'Failed to delete the invoice!!' });
-            }
+            if (err) return next({ message: 'Failed to delete the invoice!!' });
 
             next(Utils.commonMsg(200, 'Invoice deleted'));
         });
@@ -183,17 +181,11 @@ var Account = (function () {
             value = req.query.value;
 
         Utils.setObj(self.view, {
-            users: [],
-            page: page,
-            count: 0,
-            limit: limit,
-            property: "",
-            value: ""
+            users: [], page: page, count: 0,
+            limit: limit, property: "", value: ""
         });
 
-        if (property) {
-            query[property] = value;
-        }
+        if (property) query[property] = value;
 
         async.waterfall([
             function (callback) {
@@ -203,6 +195,36 @@ var Account = (function () {
                 self.view.users = users;
 
                 User.count(query, callback);
+            }
+        ], function (err, count) {
+            self.view.count = count;
+            next();
+        });
+    };
+
+    a.invoices = function (req, res, next) {
+        this._admin(req, res, next);
+        var self = this,
+            limit = req.query.limit || 10,
+            page = req.query.page || 1,
+            query = {},
+            property = req.query.property || "",
+            value = req.query.value;
+
+        Utils.setObj(self.view, {
+            invoices: [], page: page, count: 0,
+            limit: limit, property: "", value: ""
+        });
+        if (property) query[property] = value;
+
+        async.waterfall([
+            function (callback) {
+                Invoice.find(query).limit(limit).skip(limit * (page - 1)).exec(callback);
+            },
+            function (invoices, callback) {
+                self.view.invoices = invoices;
+
+                Invoice.count(query, callback);
             }
         ], function (err, count) {
             self.view.count = count;

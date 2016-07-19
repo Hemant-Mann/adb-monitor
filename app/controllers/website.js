@@ -7,6 +7,7 @@ var Platform = require('../models/platform');
 var Utils = require('../scripts/util');
 var pService = require('../services/platform');
 var config = require('../config/mail');
+var async = require('async');
 
 /**
  * Website Controller
@@ -16,7 +17,7 @@ var Website = (function () {
 
     var w = Utils.inherit(Shared, 'Website');
 
-    w.secure = ['stats', 'add', 'update', 'delete', 'getCode']; // Add Pages|Methods to this array which needs authentication
+    w.secure = ['stats', 'add', 'update', 'delete', 'getCode', 'manage']; // Add Pages|Methods to this array which needs authentication
 
     w._secure = function (req, res) {
         var basic = this.parent._secure.call(this, req, res);
@@ -138,6 +139,45 @@ var Website = (function () {
             if (err) return next(Utils.commonMsg(400));
 
             req.platform = p;
+            next();
+        });
+    };
+
+    w._admin = function (req, res, next) {
+        if (!req.user.admin) {
+            var err = new Error("Not found");
+            err.status = 404;
+            return next(err);
+        }
+        this.defaultLayout = "layouts/admin";
+    };
+
+    w.manage = function (req, res, next) {
+        this._admin(req, res, next);
+        var self = this,
+            limit = req.query.limit || 10,
+            page = req.query.page || 1,
+            query = {},
+            property = req.query.property || "",
+            value = req.query.value;
+
+        Utils.setObj(self.view, {
+            platforms: [], page: page, count: 0,
+            limit: limit, property: "", value: ""
+        });
+        if (property) query[property] = value;
+
+        async.waterfall([
+            function (callback) {
+                Platform.find(query).limit(limit).skip(limit * (page - 1)).exec(callback);
+            },
+            function (platforms, callback) {
+                self.view.platforms = platforms;
+
+                Platform.count(query, callback);
+            }
+        ], function (err, count) {
+            self.view.count = count;
             next();
         });
     };

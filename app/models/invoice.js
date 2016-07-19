@@ -27,6 +27,12 @@ var invSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    modified: {
+        type: Date,
+        set: function (val) {
+            return Date.now();
+        }
+    },
     live: {
         type: Boolean,
         default: false,
