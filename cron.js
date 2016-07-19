@@ -7,11 +7,21 @@ var async = require('async');
 var Utils = require('./app/scripts/util');
 var User = require('./app/models/user'),
 	Visitor = require('./app/models/visitor'),
-	Platform = require('./app/models/platform');
+	Platform = require('./app/models/platform'),
+	Meta = require('./app/models/meta');
 
 var logFile = fs.createWriteStream('./logs/' + Utils.today() + '.txt', {flags: 'a'});
 
 async.waterfall([
+	function (callback) {
+		var end = new Date();
+		end.setDate(end.getDate() - 1);
+		end.setHours(0, 0, 0, 0);
+
+		Meta.remove({ created: { $lte: end }}, function (err) {
+			callback();
+		});
+	},
 	function (callback) {
 		Platform.find({}, '_id uid', callback);
 	},
@@ -35,7 +45,7 @@ async.waterfall([
 		Object.keys(group).forEach(function (u) {
 			Visitor.count({
 				created: {
-					// $gte: dateQuery.start,
+					$gte: dateQuery.start,
 					$lte: dateQuery.end
 				},
 				pid: {
@@ -53,32 +63,34 @@ async.waterfall([
 		});
 	},
 	function (credits, total, callback) {
-		var i = 0;
+		var i = 1;
 
 		Object.keys(credits).forEach(function (id) {
 			User.findOne({ _id: id }, function (err, u) {
-				i++;
-				if (err || !u) return;
+				if (err || !u) {
+					if (i === total) {
+						return callback();
+					} else ++i;
+				}
 
 				if (!u.used) {
 					u.used = 0;
 				}
-				u.used += credits[id];
+				u.used = u.used + Number(credits[id]);
 
 				if (u.used > u.credits) {
 					Platform.update({ uid: id }, {$set: {live: false}}, function (err) {
 						u.save(function (err) {
 							if (i === total) {
 								return callback();
-							}
+							} else ++i;
 						});
-
 					});
 				} else {
 					u.save(function (err) {
 						if (i === total) {
 							return callback();
-						}
+						} else ++i;
 					});
 				}
 			});

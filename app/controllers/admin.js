@@ -13,7 +13,7 @@ var Admin = (function () {
     'use strict';
 
     var a = Utils.inherit(Shared, 'Admin');
-    a.secure = ['index', 'search', 'fields', 'edit', 'info', 'update', 'delete'];
+    a.secure = ['index', 'search', 'fields', 'edit', 'info', 'update', 'delete', 'loginas'];
 
     String.prototype.ucfirst = function () {
         return this.charAt(0).toUpperCase() + this.slice(1);
@@ -290,6 +290,24 @@ var Admin = (function () {
             console.log(e);
             self.view.fields = [];
         }
+    };
+
+    a.loginas = function (req, res, next) {
+        var uid = req.query.uid;
+        if (!uid) {
+            return next(new Error('Not found'));
+        }
+
+        req.session.adminUID = req.user._id;
+        User.findOne({ _id: uid }, function (err, u) {
+            if (err || !u) next(new Error('Not found'));
+
+            req.login(u, function (err) {
+                if (err) return next(err);
+
+                res.redirect('/dashboard');
+            });
+        });
     };
     
     return a;

@@ -170,8 +170,24 @@ var Auth = (function () {
     };
     
     a.logout = function (req, res, cb) {
+        var admin = req.session.adminUID;
         req.logout();
-        res.redirect('/');
+
+        if (!admin) return res.redirect('/');
+        
+        User.findOne({ _id: admin}, function (err, u) {
+            if (err || !u) {
+                delete req.session.adminUID;
+                return;
+            }
+
+            req.login(u, function (err) {
+                if (err) {
+                    return res.redirect('/');
+                }
+                res.redirect('/admin');
+            });
+        });
     };
 
     return a;
