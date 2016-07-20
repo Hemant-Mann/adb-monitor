@@ -25,6 +25,7 @@
                         <tr>
                             <th>Id</th>
                             <th>Name</th>
+                            <th>Email</th>
                             <th>Modified</th>
                             <th>Credits</th>
                             <th>Used</th>
@@ -37,6 +38,7 @@
                         <tr>
                             <td><%= users[i]._id %></td>
                             <td><a href="/admin/update/user/<%= users[i]._id %>"><%= users[i].name %></a></td>
+                            <td><%= users[i].email %></td>
                             <td><small><%= users[i].modified %></small></td>
                             <td><%= users[i].credits %></td>
                             <td><%= users[i].used %></td>
