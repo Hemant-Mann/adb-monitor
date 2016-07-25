@@ -1,0 +1,28 @@
+<style>
+.overlay-highlight {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 0;
+    z-index: 2147483620;
+}
+
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+</style>
+<div class="overlay-highlight" style="text-align: center; background: rgba(55, 147, 200, 0.972549);">
+    <h3 style="color: rgb(255, 255, 255);">
+    	<span class="overlay-highlight-arrow" style="color: rgb(255, 255, 255);">↑<br></span>
+    	<% if (meta.message) { %>
+    	<%= meta.message %>
+    	<% } else { %>
+    	Please Disable Your AdBlocker and reload the page to continue viewing articles on <%= domain %>
+    	<% } %>
+    </h3>
+    <% if (meta.img) { %>
+    <img src="meta.img" alt="Banner Image">
+    <% } %>
+</div>

@@ -74,6 +74,8 @@
                                 <a href="website/update/<%= platforms[i]._id %>" data-update='<%- JSON.stringify({live: 1}) %>' class="update btn btn-success btn-xs"><i class="fa fa-check"></i> Enable</a>
                                 <% } %>
 
+                                <a href="/website/adblocker/<%= platforms[i]._id %>.html" class="btn btn-purple btn-xs"><i class="fa fa-cog"></i> AdBlocker</a>
+
                                 <a href="website/delete/<%= platforms[i]._id %>" data-message="Are you sure you want to delete this platform?" class="delete btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a>
                             </td>
                         </tr>

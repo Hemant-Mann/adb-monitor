@@ -18,7 +18,7 @@ async.waterfall([
 		end.setDate(end.getDate() - 1);
 		end.setHours(0, 0, 0, 0);
 
-		Meta.remove({ created: { $lte: end }}, function (err) {
+		Meta.remove({ created: { $lte: end }, prop: 'user' }, function (err) {
 			callback();
 		});
 	},

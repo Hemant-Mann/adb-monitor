@@ -13,6 +13,13 @@ router.post(regex, function (req, res, next) {
 	Website._init(req, res, next);
 });
 
+router.get('/adblocker/:id', function (req, res, next) {
+	Website._init(req, res, next, {method: 'adblocker'});
+})
+.post('/adblocker/:id', function (req, res, next) {
+	Website._init(req, res, next, {method: 'adblocker'});
+});
+
 router.get('/stats/:id', function (req, res, next) {
 	Website._init(req, res, next, {method: 'stats'});
 })

@@ -2,6 +2,7 @@ var Shared = require('./controller');
 var display = require('./tracking').display;
 var User = require('../models/user');
 var Stat = require('../models/stat');
+var Meta = require('../models/meta');
 var Platform = require('../models/platform');
 
 var Utils = require('../scripts/util');
@@ -17,7 +18,7 @@ var Website = (function () {
 
     var w = Utils.inherit(Shared, 'Website');
 
-    w.secure = ['stats', 'add', 'update', 'delete', 'getCode', 'manage']; // Add Pages|Methods to this array which needs authentication
+    w.secure = ['stats', 'add', 'update', 'delete', 'getCode', 'manage', 'adblocker']; // Add Pages|Methods to this array which needs authentication
 
     w._secure = function (req, res) {
         var basic = this.parent._secure.call(this, req, res);
@@ -123,14 +124,29 @@ var Website = (function () {
         var cb = req.query.callback, pid = req.query.pid;
         if (!pid || !cb) return next(new Error("Invalid Request"));
 
-        Platform.findOne({ _id: Utils.parseParam(pid) }, 'live', function (err, p) {
+        Platform.findOne({ _id: Utils.parseParam(pid) }, 'live domain _id', function (err, p) {
             if (err || !p) {
                 var err = new Error("Invalid Request");
                 err.status = 400;
                 return next(err);
             }
+            var data = { live: p.live, html: '' };
+            if (!data.live) { // render the adblocker template
+                return res.send(cb + "(" + JSON.stringify(data) + ")");
+            }
 
-            res.send(cb + "(" + JSON.stringify(p) + ")");
+            Meta.findOne({'prop': 'platform', pid: p._id}, 'misc _id', function (err, meta) {
+                if (err || !meta) {
+                    meta = {}; meta.misc = {};
+                }
+                
+                Utils.renderTemplate('default', {
+                    domain: p.domain, meta: meta.misc || {}
+                }, function (err, html) {
+                    data.html = html || '';
+                    return res.send(cb + "(" + JSON.stringify(data) + ")");
+                });
+            });
         });
     };
 
@@ -140,6 +156,35 @@ var Website = (function () {
 
             req.platform = p;
             next();
+        });
+    };
+
+    w.adblocker = function (req, res, next) {
+        var platform = req.platform,
+            self = this,
+            query = { prop: 'platform', pid: platform._id };
+        Utils.setObj(self.view, {
+            message: 'Turn On Your AdBlocker to see the page!!', settings: {}, platform: platform
+        });
+
+        Meta.findOne(query, function (err, m) {
+            if (err) return next(Utils.commonMsg(500));
+            if (!m && req.method !== 'POST') return next();
+
+            if (req.method === 'POST') {
+                if (!m) m = new Meta(query);
+                m.val = 'adblocker';
+                m.misc = {
+                    message: req.body.message,
+                    img: req.body.img
+                };
+                m.save();
+                self.view.settings = m.misc;
+                next({ message: "AdBlocker Settings updated!! "});
+            } else {
+                self.view.settings = m.misc;
+                next();
+            }
         });
     };
 

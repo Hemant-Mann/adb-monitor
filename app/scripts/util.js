@@ -1,6 +1,7 @@
 var urlParser = require('url');
 var fs = require('fs');
 var path = require('path');
+var ejs = require('ejs');
 
 /**
  * Contains Utility functions
@@ -177,6 +178,22 @@ var utils = {
             models.sort();
             return models;
         }
+    },
+    renderTemplate: function (template, data, cb) {
+        if (!template) return "";
+        var rendered,
+            self = this,
+            templateDir = '../views/layouts/templates/',
+            file = path.join(__dirname, templateDir + template + '.ejs');
+
+        fs.readFile(file, 'utf-8', function (err, html) {
+            if (err) {
+                return cb(self.commonMsg(500), '');
+            }
+
+            rendered = ejs.render(html, data);
+            cb(null, rendered);
+        });
     }
 };
 
