@@ -130,7 +130,7 @@ var Website = (function () {
                 err.status = 400;
                 return next(err);
             }
-            var data = { live: p.live, html: '' };
+            var data = { live: p.live, html: '', visits: 3 };
             if (!data.live) { // render the adblocker template
                 return res.send(cb + "(" + JSON.stringify(data) + ")");
             }
@@ -139,11 +139,13 @@ var Website = (function () {
                 if (err || !meta) {
                     meta = {}; meta.misc = {};
                 }
+                var misc = meta.misc || {};
                 
                 Utils.renderTemplate('default', {
-                    domain: p.domain, meta: meta.misc || {}
+                    domain: p.domain, meta: misc
                 }, function (err, html) {
                     data.html = html || '';
+                    data.visits = Number(misc.visits) || 3;
                     return res.send(cb + "(" + JSON.stringify(data) + ")");
                 });
             });
@@ -176,7 +178,8 @@ var Website = (function () {
                 m.val = 'adblocker';
                 m.misc = {
                     message: req.body.message,
-                    img: req.body.img
+                    img: req.body.img,
+                    visits: Number(req.body.visits)
                 };
                 m.save();
                 self.view.settings = m.misc;
